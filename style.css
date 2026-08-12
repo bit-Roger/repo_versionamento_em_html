@@ -478,3 +478,72 @@
       color:var(--texto) !important;
     }
   }
+    .modelo-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .modelo-box {
+    width: min(620px, 100%);
+    padding: 30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .modelo-box h2 {
+    margin: 0 0 10px;
+  }
+
+  .modelo-box > p {
+    margin: 0 0 25px;
+  }
+
+  .modelo-opcoes {
+    display: grid;
+    gap: 15px;
+  }
+
+  .modelo-opcao {
+    width: 100%;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+  }
+
+  .modelo-opcao:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  }
+
+  .modelo-opcao strong {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+
+  .modelo-opcao span {
+    display: block;
+    font-size: 14px;
+  }
+
+  /* O seletor nunca deve aparecer no documento impresso */
+  @media print {
+    #modeloOverlay {
+      display: none !important;
+    }
+  }
