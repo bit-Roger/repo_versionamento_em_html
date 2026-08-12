@@ -4,191 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--Pra cada relatório lembrar de alterar o título-->
-<title>Atualização do Sistema PCA - v0.xx.x</title>
-<style>
-  :root {
-    --vinho: #7a0c1e;
-    --vinho-escuro: #4d020c;
-    --vermelho-faixa: #990800;
-    --rosa-claro: #fbeef0;
-    --texto: #000000;
-    --cinza: #6b6b6b;
-  }
-
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  body {
-    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-    background: #f2f2f2;
-    color: var(--texto);
-    line-height: 1.5;
-    padding: 24px 0 60px;
-  }
-
-  .page {
-    max-width: 900px;
-    margin: 0 auto 32px;
-    background: #ffffff;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
-  }
-  /*cabeçalho*/
-  header.top {
-    background: var(--vinho);
-    color: #fff;
-    padding: 24px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  header.top::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    height: 6px;
-    background: var(--vermelho-faixa);
-  }
-
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .logo {
-    width: 56px;
-    height: 56px;
-    flex-shrink: 0;
-  }
-
-  .logo img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    background: #fff;
-    border-radius: 25%;
-    padding: 3px;
-  }
-
-  .brand h1 {
-    font-size: 22px;
-    letter-spacing: 0.3px;
-    margin-bottom: 4px;
-  }
-
-  .brand p {
-    font-size: 13px;
-    opacity: 0.9;
-  }
-
-  .version-tag {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 6px;
-    padding: 8px 16px;
-    text-align: center;
-    min-width: 100px;
-  }
-
-  .version-tag .versãp {
-    font-weight: 700;
-    font-size: 15px;
-  }
-
-  .version-tag .data {
-    font-size: 12px;
-    opacity: 0.85;
-    margin-top: 2px;
-  }
-
-  main {
-    padding: 32px;
-  }
-
-  .intro {
-    margin-bottom: 28px;
-    color: var(--texto);
-    font-size: 15px;
-  }
-
-  .section {
-    margin-bottom: 28px;
-  }
-
-  .section-title {
-    background: var(--vinho);
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    padding: 10px 16px;
-    border-radius: 4px;
-    margin-bottom: 12px;
-  }
-
-  .item {
-    background: var(--rosa-claro);
-    border-left: 4px solid var(--vermelho-faixa);
-    border-radius: 4px;
-    padding: 12px 16px;
-    margin-bottom: 10px;
-  }
-
-  .item:last-child {
-    margin-bottom: 0;
-  }
-
-  .item h3 {
-    font-size: 14px;
-    color: var(--vermelho-faixa);
-    margin-bottom: 4px;
-  }
-
-  .item p {
-    font-size: 13.5px;
-    color: var(--texto);
-  }
-
-  footer.bottom {
-    background: var(--vinho);
-    color: #fff;
-    padding: 16px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-  }
-
-  footer.bottom .company {
-    font-weight: 700;
-    font-size: 13px;
-    margin-bottom: 2px;
-  }
-
-  footer.bottom .tagline {
-    opacity: 0.85;
-  }
-
-  @media (max-width: 600px) {
-    header.top, footer.bottom, main {
-      padding-left: 18px;
-      padding-right: 18px;
-    }
-    .brand h1 {
-      font-size: 18px;
-    }
-  }
-</style>
+<title>Versionamento - PCA</title>
+<link rel ="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -202,125 +19,218 @@
       </div>
     </div>
     <div class="version-tag">
-      <div class="versão">v0.xx.x</div>
-      <div class="data"><strong>xx/xx/2026</strong></div>
+      <div class="versão">
+        <input class="versao-input" placeholder="EX.: vX.XX.X" value="vX.XX.X">
+      </div>
+      <div class="data">
+        <input class="data-input" type="text" placeholder="dd/mm/aaaa" value="xx/xx/2026">
+      </div>
     </div>
   </header>
 
   <main>
-    <p class="intro">Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PCA.</p>
-    <!--as seções são os treco grande em vinho-->
-    <section class="section">
-      <div class="section-title"></div>
-      <!--item são os topicozinhos(o que de fato mudou no sistema)-->
-      <div class="item">
-        <!--esse &gt é a setinha pra mostrar o caminho dentro do sistema-->
-        <h3></h3>
-        <p></p>
-      </div>
+    <body>
+<div class="wrap">
+  <p class="sub">Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema
+PCA.</p>
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  <div class="painel" id="secoesContainer"></div>
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+  <div class="linha-botoes">
+    <button class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
+    <button class="btn-pdf" onclick="imprimirPDF()">Imprimir / Gerar PDF</button>
+  </div>
+<!-- Usado só na hora de imprimir/gerar PDF -->
+<div id="previewContainer" aria-hidden="true">
+  <div class="preview-doc" id="previewDoc"></div>
+</div>
+<div id="printContainer" aria-hidden="true"></div>
 
-    <section class="section">
-      <div class="section-title"></div>
+  
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+<script>
+let contadorSecao = 0;
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+function adicionarSecao(){
+  contadorSecao++;
+  const id = contadorSecao;
+  const container = document.getElementById('secoesContainer');
 
-    <section class="section">
-      <div class="section-title"></div>
+  const div = document.createElement('div');
+  div.className = 'secao-editor';
+  div.id = 'secao-' + id;
+  div.innerHTML = `
+    <button class="btn-remover remover-secao" onclick="removerSecao(${id})">remover seção ✕</button>
+    <input class="secao-titulo-input" placeholder="Título da seção (ex: Correções)" data-role="titulo">
+    <div class="itens-lista" id="itens-${id}"></div>
+    <div class="linha-botoes">
+      <button class="btn-item" onclick="adicionarItem(${id})">+ Adicionar item</button>
+    </div>
+  `;
+  container.appendChild(div);
+  adicionarItem(id);
+}
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+function adicionarItem(secaoId){
+  const lista = document.getElementById('itens-' + secaoId);
+  const item = document.createElement('div');
+  item.className = 'item-editor';
+  item.innerHTML = `
+    <button class="btn-remover btn-remover-item" onclick="this.parentElement.remove()">remover item ✕</button>
+    <label>Caminho no sistema</label>
+    <input placeholder="Ex: Cadastros &gt; Fornecedores &gt; Editar" data-role="h3">
+    <div class="caminho-hint">Use &gt; para indicar a setinha entre as telas.</div>
+    <label>Descrição da mudança</label>
+    <textarea rows="2" placeholder="Descreva o que mudou..." data-role="p"></textarea>
+  `;
+  lista.appendChild(item);
+}
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+function removerSecao(id){
+  document.getElementById('secao-' + id).remove();
+}
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+function textoSeguro(valor){
+  return (valor || '').trim();
+}
 
-    <section class="section">
-      <div class="section-title"></div>
+function criarTexto(parent, texto, classe){
+  const el = document.createElement('span');
+  el.className = 'print-value ' + (classe || '');
+  el.textContent = texto;
+  return el;
+}
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+function montarDocumentoImpressao(){
+  const origem = document.querySelector('.page');
+  const container = document.getElementById('printContainer');
 
-    <section class="section">
-      <div class="section-title"></div>
+  // Copia a página real para preservar exatamente o visual do site.
+  const copia = origem.cloneNode(true);
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  // Remove todos os controles que nunca devem aparecer no PDF.
+  copia.querySelectorAll('button, .linha-botoes, .caminho-hint, label').forEach(el => el.remove());
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  // Versão: imprime exatamente o valor digitado.
+  const versaoOriginal = origem.querySelector('.versao-input');
+  const versaoDestino = copia.querySelector('.versao-input');
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  if (versaoDestino){
+    const valor = textoSeguro(versaoOriginal ? versaoOriginal.value : '');
+    const texto = criarTexto(document.createElement('div'), valor, 'versao-print');
+    versaoDestino.replaceWith(texto);
+  }
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+  // Data: imprime exatamente o valor digitado.
+  const dataOriginal = origem.querySelector('.data-input');
+  const dataDestino = copia.querySelector('.data-input');
 
-    <section class="section">
-      <div class="section-title"></div>
+  if (dataDestino){
+    const valor = textoSeguro(dataOriginal ? dataOriginal.value : '');
+    const texto = criarTexto(document.createElement('div'), valor, 'data-print');
+    dataDestino.replaceWith(texto);
+  }
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  // Títulos das seções.
+  const secoesOrigem = origem.querySelectorAll('.secao-editor');
+  const secoesDestino = copia.querySelectorAll('.secao-editor');
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+  secoesOrigem.forEach((secao, indice) => {
+    const destino = secoesDestino[indice];
+    if (!destino) return;
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
+    const tituloOrigem = secao.querySelector('[data-role="titulo"]');
+    const tituloDestino = destino.querySelector('[data-role="titulo"]');
 
-      <div class="item">
-        <h3></h3>
-        <p></p>
-      </div>
-    </section>
+    if (tituloDestino){
+      const texto = criarTexto(
+        document.createElement('div'),
+        textoSeguro(tituloOrigem ? tituloOrigem.value : ''),
+        ''
+      );
+      texto.className = 'section-title';
+      tituloDestino.replaceWith(texto);
+    }
+
+    // Itens: mantém todos os adicionados, editados e removidos no estado atual.
+    const itensOrigem = secao.querySelectorAll('.item-editor');
+    const itensDestino = destino.querySelectorAll('.item-editor');
+
+    itensOrigem.forEach((item, itemIndex) => {
+      const itemDestino = itensDestino[itemIndex];
+      if (!itemDestino) return;
+
+      const h3Origem = item.querySelector('[data-role="h3"]');
+      const pOrigem = item.querySelector('[data-role="p"]');
+
+      const h3Destino = itemDestino.querySelector('[data-role="h3"]');
+      const pDestino = itemDestino.querySelector('[data-role="p"]');
+
+      if (h3Destino){
+        h3Destino.replaceWith(
+          criarTexto(
+            document.createElement('div'),
+            textoSeguro(h3Origem ? h3Origem.value : ''),
+            ''
+          )
+        );
+      }
+
+      if (pDestino){
+        const p = document.createElement('p');
+        p.className = 'print-value';
+        p.textContent = textoSeguro(pOrigem ? pOrigem.value : '');
+        pDestino.replaceWith(p);
+      }
+    });
+  });
+
+  // Garante que o conteúdo da introdução usado na tela seja o mesmo no PDF.
+  const introTela = origem.querySelector('.sub');
+  const introPDF = copia.querySelector('.sub');
+  if (introTela && introPDF){
+    introPDF.textContent = textoSeguro(introTela.textContent);
+  }
+
+  container.innerHTML = '';
+  container.appendChild(copia);
+}
+
+function imprimirPDF(){
+  const container = document.getElementById('printContainer');
+
+  // O container de impressão precisa ficar diretamente no <body>.
+  // Se permanecer dentro de .page, o CSS de impressão esconderia
+  // o próprio container junto com a página original.
+  if (container.parentElement !== document.body){
+    document.body.appendChild(container);
+  }
+
+  montarDocumentoImpressao();
+
+  // Aguarda o navegador aplicar o clone e renderizar o conteúdo.
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.print();
+    });
+  });
+}
+
+window.addEventListener('afterprint', () => {
+  const container = document.getElementById('printContainer');
+  const originalPage = document.querySelector('body > .page');
+
+  if (container){
+    container.innerHTML = '';
+    if (originalPage){
+      originalPage.appendChild(container);
+    }
+  }
+});
+
+adicionarSecao();
+</script>
   </main>
-
 
   <footer class="bottom">
     <div>
