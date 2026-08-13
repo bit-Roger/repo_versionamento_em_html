@@ -27,11 +27,15 @@
   }
 
   .page {
-    max-width: 900px;
+    width: 210mm;
+    min-height: 297mm;
+    display: flex;
+    flex-direction: column;
     margin: 0 auto 32px;
     background: #ffffff;
     border-radius: 6px;
     overflow: hidden;
+    box-sizing: border-box;
     box-shadow: 0 2px 10px rgba(0,0,0,0.12);
   }
   /*cabeçalho*/
@@ -112,6 +116,7 @@
 
   main {
     padding: 32px;
+    flex: 1;
   }
 
   .intro {
@@ -166,6 +171,8 @@
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
+    box-sizing: border-box;
+    border-radius: 6px;
   }
 
   footer.bottom .company {
@@ -369,28 +376,56 @@
       margin:0 !important;
       padding:0 !important;
       background:#fff !important;
+      width: 210mm !important;
+      min-height: 297mm !important;
     }
-
+    body > *{
+      visibility: hidden;
+    }
+    
     body > .page{
-      display:none !important;
+      width: 210mm;
+      min-height: 297mm;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      page-break-after: always;
     }
+    main {
+      flex:1;
+    }
+     body > #printContainer, 
+     #printContainer *{
+      visibility: visible;
+     }
 
     body > #printContainer{
       display:block !important;
-      width:100% !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width:210mm !important;
       margin:0 !important;
       padding:0 !important;
+      background: #fff !important;
     }
 
     #printContainer .page{
-      display:block !important;
-      width:100% !important;
+      display:flex !important;
+      flex-direction: column !important;
+      width:210mm !important;
+      min-height: 297mm !important;
+      height: 297mm !important;
       max-width:none !important;
       margin:0 !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
       border-radius:0 !important;
       box-shadow:none !important;
-      overflow:visible !important;
+      overflow:hidden !important;
       background:#fff !important;
+      page-break-after: always;
+      break-after: page;
     }
 
     #printContainer header.top{
