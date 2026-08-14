@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--Pra cada relatório lembrar de alterar o título-->
 <title>Versionamento - PCA</title>
-<link rel ="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -41,7 +40,7 @@
 <div class="page">
   <header class="top">
     <div class="brand">
-      <div class="logo"><img src="image.png"="EL Produções de Software"></div>
+      <div class="logo"><img src="image.png" alt="EL Produções de Software"></div>
       <div>
         <h1 id="tituloSistema">ATUALIZAÇÃO DO SISTEMA</h1>
         <p id="nomeSistema">Selecione o modelo</p>
@@ -58,23 +57,22 @@
   </header>
 
   <main>
-    <body>
-<div class="wrap">
-  <p class="sub" id="textoIntroducao"></p>
+    <div class="wrap">
+      <p class="sub" id="textoIntroducao"></p>
 
-  <div class="painel" id="secoesContainer"></div>
+      <div class="painel" id="secoesContainer"></div>
 
-  <div class="linha-botoes">
-    <button class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
-    <button class="btn-pdf" onclick="imprimirPDF()">Imprimir / Gerar PDF</button>
-  </div>
-<!-- Usado só na hora de imprimir/gerar PDF -->
-<div id="previewContainer" arial-hidden="true">
-  <div class="preview-doc" id="previewDoc"></div>
-</div>
-<div id="printContainer" aria-hidden="true"></div>
+      <div class="linha-botoes">
+        <button class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
+        <button class="btn-pdf" onclick="imprimirPDF()">Gerar / Salvar PDF</button>
+      </div>
+    </div>
 
- <script src="script.js"></script>
+    <div id="previewContainer" aria-hidden="true">
+      <div class="preview-doc" id="previewDoc"></div>
+    </div>
+
+    <div id="printContainer" aria-hidden="true"></div>
   </main>
 
   <footer class="bottom">
@@ -85,5 +83,8 @@
   </footer>
 </div>
 
+<!-- Geração de PDF no navegador -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
