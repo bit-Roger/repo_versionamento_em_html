@@ -7,64 +7,28 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <div id="modeloOverlay" class="modelo-overlay" aria-label="Seleção do modelo">
   <div class="modelo-box">
     <h2>Selecione o modelo</h2>
     <p>Escolha qual modelo será utilizado neste documento:</p>
     <div class="modelo-opcoes">
-      <button type="button" class="modelo-opcao" onclick="selecionarModelo('PCA')">
-        <strong>PCA</strong><span>Prestação de Contas e Auditoria</span>
-      </button>
-      <button type="button" class="modelo-opcao" onclick="selecionarModelo('CIA')">
-        <strong>CIA</strong><span>Controle Interno e Auditoria</span>
-      </button>
-      <button type="button" class="modelo-opcao" onclick="selecionarModelo('PTM')">
-        <strong>PTM</strong><span>Portal da Transparência Municipal</span>
-      </button>
-      <button type="button" class="modelo-opcao" onclick="selecionarModelo('PTM_ADM')">
-        <strong>PTM_ADM</strong><span>Portal da Transparência Municipal Administrativo</span>
-      </button>
+      <button type="button" class="modelo-opcao" data-modelo="PCA"><strong>PCA</strong><span>Prestação de Contas e Auditoria</span></button>
+      <button type="button" class="modelo-opcao" data-modelo="CIA"><strong>CIA</strong><span>Controle Interno e Auditoria</span></button>
+      <button type="button" class="modelo-opcao" data-modelo="PTM"><strong>PTM</strong><span>Portal da Transparência Municipal</span></button>
+      <button type="button" class="modelo-opcao" data-modelo="PTM_ADM"><strong>PTM_ADM</strong><span>Portal da Transparência Municipal Administrativo</span></button>
     </div>
   </div>
 </div>
-
 <div class="page">
   <header class="top">
-    <div class="brand">
-      <div class="logo"><img src="image.png" alt="EL Produções de Software"></div>
-      <div>
-        <h1 id="tituloSistema">ATUALIZAÇÃO DO SISTEMA</h1>
-        <p id="nomeSistema">Selecione o modelo</p>
-      </div>
-    </div>
-    <div class="version-tag">
-      <div class="versão"><input class="versao-input" placeholder="EX.: vX.XX.X"></div>
-      <div class="data"><input class="data-input" type="text" placeholder="dd/mm/aaaa"></div>
-    </div>
+    <div class="brand"><div class="logo"><img src="image.png" alt="EL Produções de Software"></div><div><h1 id="tituloSistema">ATUALIZAÇÃO DO SISTEMA</h1><p id="nomeSistema">Selecione o modelo</p></div></div>
+    <div class="version-tag"><div class="versão"><input class="versao-input" placeholder="EX.: vX.XX.X"></div><div class="data"><input class="data-input" type="text" placeholder="dd/mm/aaaa"></div></div>
   </header>
-
-  <main>
-    <div class="wrap">
-      <p class="sub" id="textoIntroducao"></p>
-      <div class="painel" id="secoesContainer"></div>
-      <div class="linha-botoes">
-        <button type="button" class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
-        <button type="button" class="btn-pdf" onclick="imprimirPDF()">Gerar / Salvar PDF</button>
-      </div>
-    </div>
-    <div id="previewContainer" aria-hidden="true"><div class="preview-doc" id="previewDoc"></div></div>
-    <div id="printContainer" aria-hidden="true"></div>
-  </main>
-
-  <footer class="bottom">
-    <div>
-      <div class="company">EL PRODUÇÕES DE SOFTWARE</div>
-      <div class="tagline">Soluções tecnológicas para uma gestão pública mais eficiente.</div>
-    </div>
-  </footer>
+  <main><div class="wrap"><p class="sub" id="textoIntroducao"></p><div class="painel" id="secoesContainer"></div><div class="linha-botoes"><button type="button" id="btnAdicionarSecao" class="btn-secao">+ Adicionar seção</button><button type="button" id="btnGerarPDF" class="btn-pdf">Gerar / Salvar PDF</button></div></div><div id="printContainer" aria-hidden="true"></div></main>
+  <footer class="bottom"><div><div class="company">EL PRODUÇÕES DE SOFTWARE</div><div class="tagline">Soluções tecnológicas para uma gestão pública mais eficiente.</div></div></footer>
 </div>
-
-<script src="script.bundle.js"></script>
+<script src="libs/html2canvas.min.js"></script>
+<script src="libs/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

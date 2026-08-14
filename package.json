@@ -1,17 +1,11 @@
 {
   "name": "versionamento-netlify",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "scripts": {
-    "build": "esbuild script.js --bundle --platform=browser --format=iife --target=es2020 --outfile=script.bundle.js --minify"
-  },
+  "scripts": { "build": "node build.mjs" },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.0",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.0"
-  },
-  "devDependencies": {
-    "esbuild": "^0.28.1"
+    "html2canvas": "1.4.1",
+    "jspdf": "4.2.0"
   }
 }

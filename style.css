@@ -772,3 +772,40 @@
   break-inside: avoid;
   page-break-inside: avoid;
 }
+
+/* Estado fechado do seletor de modelo: o fechamento não depende de onclick inline. */
+.modelo-overlay.fechado { display: none !important; }
+
+/* PDF: folha A4 sem margens laterais e com cabeçalho/rodapé repetidos. */
+#printContainer.pdf-document {
+  position: fixed !important;
+  left: -100000px !important;
+  top: 0 !important;
+  width: 794px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  visibility: visible !important;
+  pointer-events: none !important;
+  z-index: -1000 !important;
+  background: #fff !important;
+}
+#printContainer .pdf-page {
+  width: 794px !important; height: 1123px !important;
+  min-width: 794px !important; max-width: 794px !important;
+  min-height: 1123px !important; max-height: 1123px !important;
+  margin: 0 !important; padding: 0 !important;
+  overflow: hidden !important; display: flex !important;
+  flex-direction: column !important; background: #fff !important;
+  border: 0 !important; border-radius: 0 !important; box-shadow: none !important;
+}
+#printContainer .pdf-page .pdf-header,
+#printContainer .pdf-page .pdf-footer {
+  width: 794px !important; min-width: 794px !important; max-width: 794px !important;
+  margin: 0 !important; border-radius: 0 !important; box-sizing: border-box !important;
+  flex: 0 0 auto !important;
+}
+#printContainer .pdf-page .pdf-main {
+  width: 794px !important; box-sizing: border-box !important;
+  margin: 0 !important; overflow: visible !important; flex: 0 0 auto !important;
+  background: #fff !important;
+}
