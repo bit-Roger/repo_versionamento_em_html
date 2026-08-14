@@ -1,3 +1,6 @@
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+
 const modelos = {
   PCA: {
     sigla: 'PCA',
@@ -321,9 +324,6 @@ function nomeArquivoPDF(dados) {
 }
 
 async function gerarPDFBlob(raiz, nomeArquivo) {
-  if (!window.html2canvas || !window.jspdf?.jsPDF) {
-    throw new Error('Bibliotecas de geração de PDF não foram carregadas. Recarregue a página e tente novamente.');
-  }
 
   await esperarImagens(raiz);
   await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -331,7 +331,6 @@ async function gerarPDFBlob(raiz, nomeArquivo) {
   const paginas = [...raiz.querySelectorAll('.pdf-page')];
   if (!paginas.length) throw new Error('Nenhuma página foi criada para o PDF.');
 
-  const { jsPDF } = window.jspdf;
   const pdf = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -342,7 +341,7 @@ async function gerarPDFBlob(raiz, nomeArquivo) {
   for (let i = 0; i < paginas.length; i++) {
     const pagina = paginas[i];
 
-    const canvas = await window.html2canvas(pagina, {
+    const canvas = await html2canvas(pagina, {
       scale: 2,
       useCORS: true,
       allowTaint: false,
@@ -401,7 +400,7 @@ async function salvarNoSupabase(dados, pdfBlob, nomeArquivo) {
   return resultado;
 }
 
-async function imprimirPDF() {
+async function gerarESalvarPDF() {
   const botao = document.querySelector('.btn-pdf');
   let raiz = null;
 
@@ -438,3 +437,6 @@ async function imprimirPDF() {
 }
 
 adicionarSecao();
+
+// As funções são expostas ao HTML porque os botões usam onclick.
+Object.assign(window, { selecionarModelo, adicionarSecao, adicionarItem, removerSecao, gerarESalvarPDF });

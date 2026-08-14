@@ -64,7 +64,7 @@
 
       <div class="linha-botoes">
         <button class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
-        <button class="btn-pdf" onclick="imprimirPDF()">Gerar / Salvar PDF</button>
+        <button class="btn-pdf" onclick="gerarESalvarPDF()">Gerar / Salvar PDF</button>
       </div>
     </div>
 
@@ -83,8 +83,7 @@
   </footer>
 </div>
 
-<!-- Geração de PDF no navegador -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="script.js"></script>
+<!-- O build do Netlify gera script.bundle.js com html2canvas e jsPDF incluídos localmente. -->
+<script src="script.bundle.js"></script>
 </body>
 </html>
