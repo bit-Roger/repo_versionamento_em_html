@@ -313,25 +313,20 @@
 
 
 /* =========================================================
-   PDF GERADO DIRETAMENTE NO NAVEGADOR
-   Não utiliza window.print(). Cada .pdf-page é uma folha A4
-   completa e é renderizada pelo html2canvas + jsPDF.
+   PDF / IMPRESSÃO
+   Cada página é criada pelo JavaScript como uma folha A4
+   independente, com cabeçalho e rodapé próprios.
    ========================================================= */
 
-#pdfRenderRoot {
-  position: absolute;
-  left: -100000px;
-  top: 0;
-  width: 210mm;
-  margin: 0;
-  padding: 0;
-  background: #fff;
-  z-index: -1;
+#printContainer {
+  display: none;
 }
 
-.pdf-render-root,
+.pdf-document,
 .pdf-page,
-.pdf-page * {
+.pdf-main,
+.pdf-page header.top,
+.pdf-page footer.bottom {
   box-sizing: border-box;
 }
 
@@ -349,59 +344,50 @@
   border: 0;
   border-radius: 0;
   box-shadow: none;
-  position: relative;
+  break-after: page;
+  page-break-after: always;
 }
 
-.pdf-page header.top,
-.pdf-page header.pdf-header {
-  width: 210mm;
-  min-width: 210mm;
-  max-width: 210mm;
+.pdf-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.pdf-page header.top {
+  width: 100%;
+  min-width: 100%;
   flex: 0 0 auto;
   margin: 0;
   border-radius: 0;
   overflow: visible;
-  box-shadow: none;
 }
 
-.pdf-page header.top::after {
-  left: 0;
-  right: 0;
+.pdf-page footer.bottom {
   width: 100%;
-}
-
-.pdf-page footer.bottom,
-.pdf-page footer.pdf-footer {
-  width: 210mm;
-  min-width: 210mm;
-  max-width: 210mm;
+  min-width: 100%;
   flex: 0 0 auto;
   margin: 0;
   border-radius: 0;
   overflow: hidden;
-  box-shadow: none;
 }
 
 .pdf-main {
-  width: 210mm;
-  min-width: 210mm;
-  max-width: 210mm;
-  height: auto;
+  width: 100%;
+  min-width: 0;
   min-height: 0;
   flex: 1 1 auto;
-  margin: 0;
   padding: 32px !important;
+  margin: 0;
   overflow: hidden;
   background: #fff;
 }
 
-.pdf-intro {
-  margin: 0 0 28px !important;
+.pdf-main > .pdf-intro {
+  margin: 0 0 28px;
 }
 
 .pdf-section-title,
 .pdf-item {
-  flex: 0 0 auto;
   break-inside: avoid;
   page-break-inside: avoid;
 }
@@ -461,26 +447,166 @@
   margin-top: 2px;
 }
 
-.pdf-render-root button,
-.pdf-render-root .linha-botoes,
-.pdf-render-root .caminho-hint,
-.pdf-render-root label,
-.pdf-render-root input,
-.pdf-render-root textarea {
-  display: none !important;
+.pdf-measure {
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.pdf-render-root .brand,
-.pdf-render-root .version-tag,
-.pdf-render-root .pdf-header,
-.pdf-render-root .pdf-footer {
-  box-shadow: none !important;
+.pdf-measure-block {
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  width: calc(210mm - 64px);
+  visibility: hidden;
+  pointer-events: none;
 }
 
-.pdf-render-root .pdf-header,
-.pdf-render-root .pdf-footer {
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0 !important;
+  }
+
+  html,
+  body {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+
+  body {
+    display: block !important;
+  }
+
+  /* O formulário original nunca entra no PDF. */
+  body > .page,
+  body > #modeloOverlay {
+    display: none !important;
+  }
+
+  /* O container do PDF começa exatamente na borda da folha. */
+  body > #printContainer {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 210mm !important;
+    min-width: 210mm !important;
+    max-width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+    visibility: visible !important;
+    overflow: visible !important;
+  }
+
+  #printContainer,
+  #printContainer * {
+    visibility: visible !important;
+  }
+
+  #printContainer .pdf-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    break-after: page !important;
+    page-break-after: always !important;
+  }
+
+  #printContainer .pdf-page:last-child {
+    break-after: auto !important;
+    page-break-after: auto !important;
+  }
+
+  #printContainer .pdf-page header.top {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    margin: 0 !important;
+    padding: 24px 32px !important;
+    flex: 0 0 auto !important;
+    border-radius: 0 !important;
+    background: var(--vinho) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printContainer .pdf-page header.top::after {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printContainer .pdf-page footer.bottom {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    margin: 0 !important;
+    padding: 16px 32px !important;
+    flex: 0 0 auto !important;
+    border-radius: 0 !important;
+    background: var(--vinho) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printContainer .pdf-main {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    padding: 32px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+
+  #printContainer .pdf-section-title,
+  #printContainer .pdf-item,
+  #printContainer .pdf-intro {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #printContainer .pdf-section-title,
+  #printContainer .pdf-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  #printContainer .pdf-item {
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  #printContainer button,
+  #printContainer .linha-botoes,
+  #printContainer .caminho-hint,
+  #printContainer label,
+  #printContainer input,
+  #printContainer textarea {
+    display: none !important;
+  }
 }
 
     .modelo-overlay {
@@ -552,3 +678,97 @@
       display: none !important;
     }
   }
+
+/* =========================================================
+   PDF DIRETO: html2canvas + jsPDF
+   Não usa window.print() nem @media print.
+   Cada página é uma folha A4 independente.
+   ========================================================= */
+#printContainer.pdf-document {
+  display: block;
+  position: fixed;
+  left: -100000px;
+  top: 0;
+  width: 794px;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  visibility: visible;
+  pointer-events: none;
+  z-index: -1000;
+}
+
+#printContainer .pdf-page {
+  width: 794px !important;
+  height: 1123px !important;
+  min-width: 794px !important;
+  max-width: 794px !important;
+  min-height: 1123px !important;
+  max-height: 1123px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #fff !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#printContainer .pdf-page header.top {
+  width: 794px !important;
+  min-width: 794px !important;
+  max-width: 794px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+#printContainer .pdf-page header.top::after {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+}
+
+#printContainer .pdf-page footer.bottom {
+  width: 794px !important;
+  min-width: 794px !important;
+  max-width: 794px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+#printContainer .pdf-main {
+  width: 794px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  flex: 0 0 auto !important;
+  background: #fff !important;
+}
+
+#printContainer .pdf-main > .pdf-intro {
+  margin: 0 0 28px !important;
+}
+
+#printContainer .pdf-section-title,
+#printContainer .pdf-item {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.pdf-measure-block {
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.pdf-measure-block .pdf-item,
+.pdf-measure-block .pdf-section-title,
+.pdf-measure-block .pdf-intro {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}

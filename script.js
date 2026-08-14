@@ -2,46 +2,27 @@ import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
 const modelos = {
-  PCA: {
-    sigla: 'PCA',
-    nome: 'Prestação de Contas e Auditoria',
-    titulo: 'ATUALIZAÇÃO DO SISTEMA PCA',
-    introducao: 'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PCA.'
-  },
-  CIA: {
-    sigla: 'CIA',
-    nome: 'Controle Interno e Auditoria',
-    titulo: 'ATUALIZAÇÃO DO SISTEMA CIA',
-    introducao: 'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema CIA.'
-  },
-  PTM: {
-    sigla: 'PTM',
-    nome: 'Portal da Transparência Municipal',
-    titulo: 'ATUALIZAÇÃO DO SISTEMA PTM',
-    introducao: 'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PTM.'
-  },
-  PTM_ADM: {
-    sigla: 'PTM_ADM',
-    nome: 'Portal da Transparência Municipal Administrativo',
-    titulo: 'ATUALIZAÇÃO DO SISTEMA PTM_ADM',
-    introducao: 'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PTM_ADM.'
-  }
+  PCA: { sigla:'PCA', nome:'Prestação de Contas e Auditoria', titulo:'ATUALIZAÇÃO DO SISTEMA PCA', introducao:'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PCA.' },
+  CIA: { sigla:'CIA', nome:'Controle Interno e Auditoria', titulo:'ATUALIZAÇÃO DO SISTEMA CIA', introducao:'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema CIA.' },
+  PTM: { sigla:'PTM', nome:'Portal da Transparência Municipal', titulo:'ATUALIZAÇÃO DO SISTEMA PTM', introducao:'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PTM.' },
+  PTM_ADM: { sigla:'PTM_ADM', nome:'Portal da Transparência Municipal Administrativo', titulo:'ATUALIZAÇÃO DO SISTEMA PTM_ADM', introducao:'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PTM_ADM.' }
 };
 
 let modeloSelecionado = null;
 let contadorSecao = 0;
+const PDF_W = 794;
+const PDF_H = 1123;
+
+const textoSeguro = valor => (valor || '').trim();
 
 function selecionarModelo(sigla) {
   const modelo = modelos[sigla];
   if (!modelo) return;
-
   modeloSelecionado = modelo;
   document.title = `Versionamento - ${modelo.sigla}`;
-
   document.getElementById('tituloSistema').textContent = modelo.titulo;
   document.getElementById('nomeSistema').textContent = modelo.nome;
   document.getElementById('textoIntroducao').textContent = modelo.introducao;
-
   const overlay = document.getElementById('modeloOverlay');
   if (overlay) {
     overlay.style.display = 'none';
@@ -53,31 +34,29 @@ function adicionarSecao() {
   contadorSecao++;
   const id = contadorSecao;
   const container = document.getElementById('secoesContainer');
-
   const div = document.createElement('div');
   div.className = 'secao-editor';
-  div.id = 'secao-' + id;
+  div.id = `secao-${id}`;
   div.innerHTML = `
     <button type="button" class="btn-remover remover-secao" onclick="removerSecao(${id})">remover seção ✕</button>
     <input class="secao-titulo-input" placeholder="Título da seção (ex: Correções)" data-role="titulo">
     <div class="itens-lista" id="itens-${id}"></div>
-    <div class="linha-botoes">
-      <button type="button" class="btn-item" onclick="adicionarItem(${id})">+ Adicionar item</button>
-    </div>
+    <div class="linha-botoes"><button type="button" class="btn-item" onclick="adicionarItem(${id})">+ Adicionar item</button></div>
   `;
   container.appendChild(div);
   adicionarItem(id);
 }
 
 function adicionarItem(secaoId) {
-  const lista = document.getElementById('itens-' + secaoId);
+  const lista = document.getElementById(`itens-${secaoId}`);
+  if (!lista) return;
   const item = document.createElement('div');
   item.className = 'item-editor';
   item.innerHTML = `
     <button type="button" class="btn-remover btn-remover-item" onclick="this.parentElement.remove()">remover item ✕</button>
     <label>Caminho no sistema</label>
-    <input placeholder="Ex: Cadastros &gt; Fornecedores &gt; Editar" data-role="h3">
-    <div class="caminho-hint">Use &gt; para indicar a setinha entre as telas.</div>
+    <input placeholder="Ex: Cadastros > Fornecedores > Editar" data-role="h3">
+    <div class="caminho-hint">Use > para indicar a setinha entre as telas.</div>
     <label>Descrição da mudança</label>
     <textarea rows="2" placeholder="Descreva o que mudou..." data-role="p"></textarea>
   `;
@@ -85,36 +64,52 @@ function adicionarItem(secaoId) {
 }
 
 function removerSecao(id) {
-  const secao = document.getElementById('secao-' + id);
-  if (secao) secao.remove();
+  document.getElementById(`secao-${id}`)?.remove();
 }
 
-function textoSeguro(valor) {
-  return (valor || '').trim();
+function coletarDadosVersionamento() {
+  if (!modeloSelecionado) throw new Error('Selecione o modelo do sistema antes de gerar o PDF.');
+  const versao = textoSeguro(document.querySelector('.versao-input')?.value);
+  const data_digitada = textoSeguro(document.querySelector('.data-input')?.value);
+  if (!versao) throw new Error('Informe a versão.');
+  if (!data_digitada) throw new Error('Informe a data.');
+
+  const secoes = [...document.querySelectorAll('.secao-editor')].map((secao, index) => {
+    const titulo = textoSeguro(secao.querySelector('[data-role="titulo"]')?.value);
+    if (!titulo) throw new Error(`Informe o título da seção ${index + 1}.`);
+    const itens = [...secao.querySelectorAll('.item-editor')].map((item, itemIndex) => {
+      const caminho_sistema = textoSeguro(item.querySelector('[data-role="h3"]')?.value);
+      const descricao = textoSeguro(item.querySelector('[data-role="p"]')?.value);
+      if (!caminho_sistema) throw new Error(`Informe o caminho no sistema do item ${itemIndex + 1} da seção "${titulo}".`);
+      if (!descricao) throw new Error(`Informe a descrição do item ${itemIndex + 1} da seção "${titulo}".`);
+      return { caminho_sistema, descricao, ordem: itemIndex + 1 };
+    });
+    if (!itens.length) throw new Error(`A seção "${titulo}" precisa ter pelo menos um item.`);
+    return { titulo, ordem: index + 1, itens };
+  });
+  if (!secoes.length) throw new Error('Adicione pelo menos uma seção.');
+  return { modelo_sistema: modeloSelecionado.sigla, versao, data_digitada, secoes };
 }
 
-function criarTexto(texto, classe = '') {
-  const el = document.createElement('div');
-  el.className = `print-value ${classe}`.trim();
+function criarNomeArquivo(dados) {
+  const versao = dados.versao.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const data = new Date().toISOString().replace(/[:.]/g, '-');
+  return `${dados.modelo_sistema}_${versao}_${data}.pdf`;
+}
+
+function criarElementoTexto(texto, tag='div', classe='') {
+  const el = document.createElement(tag);
+  el.className = classe;
   el.textContent = texto;
   return el;
 }
 
 function criarCabecalhoPDF(origem) {
   const header = origem.querySelector('header.top').cloneNode(true);
-  const versao = origem.querySelector('.versao-input');
-  const data = origem.querySelector('.data-input');
-
-  const versaoDestino = header.querySelector('.versao-input');
-  if (versaoDestino) {
-    versaoDestino.replaceWith(criarTexto(textoSeguro(versao?.value), 'versao-print'));
-  }
-
-  const dataDestino = header.querySelector('.data-input');
-  if (dataDestino) {
-    dataDestino.replaceWith(criarTexto(textoSeguro(data?.value), 'data-print'));
-  }
-
+  const versao = textoSeguro(origem.querySelector('.versao-input')?.value);
+  const data = textoSeguro(origem.querySelector('.data-input')?.value);
+  header.querySelector('.versao-input')?.replaceWith(criarElementoTexto(versao, 'div', 'versao-print'));
+  header.querySelector('.data-input')?.replaceWith(criarElementoTexto(data, 'div', 'data-print'));
   header.classList.add('pdf-header');
   return header;
 }
@@ -125,241 +120,152 @@ function criarRodapePDF(origem) {
   return footer;
 }
 
-function criarBlocosPDF(origem) {
+function prepararBlocosPDF(origem) {
   const blocos = [];
-
-  const intro = origem.querySelector('.sub');
-  if (intro && textoSeguro(intro.textContent)) {
-    const introClone = document.createElement('p');
-    introClone.className = 'sub pdf-intro';
-    introClone.textContent = textoSeguro(intro.textContent);
-    blocos.push(introClone);
-  }
+  const intro = textoSeguro(origem.querySelector('.sub')?.textContent);
+  if (intro) blocos.push(criarElementoTexto(intro, 'p', 'sub pdf-intro'));
 
   origem.querySelectorAll('.secao-editor').forEach(secao => {
     const titulo = textoSeguro(secao.querySelector('[data-role="titulo"]')?.value);
-    if (!titulo) return;
-
-    const sectionTitle = document.createElement('div');
-    sectionTitle.className = 'section-title pdf-section-title';
-    sectionTitle.textContent = titulo;
-    blocos.push(sectionTitle);
-
+    blocos.push(criarElementoTexto(titulo, 'div', 'section-title pdf-section-title'));
     secao.querySelectorAll('.item-editor').forEach(item => {
-      const caminho = textoSeguro(item.querySelector('[data-role="h3"]')?.value);
-      const descricao = textoSeguro(item.querySelector('[data-role="p"]')?.value);
-      if (!caminho && !descricao) return;
-
-      const itemPDF = document.createElement('div');
-      itemPDF.className = 'item pdf-item';
-
-      const h3 = document.createElement('h3');
-      h3.textContent = caminho;
-      itemPDF.appendChild(h3);
-
-      const p = document.createElement('p');
-      p.textContent = descricao;
-      itemPDF.appendChild(p);
-
-      blocos.push(itemPDF);
+      const card = document.createElement('div');
+      card.className = 'item pdf-item';
+      card.appendChild(criarElementoTexto(textoSeguro(item.querySelector('[data-role="h3"]')?.value), 'h3'));
+      card.appendChild(criarElementoTexto(textoSeguro(item.querySelector('[data-role="p"]')?.value), 'p'));
+      blocos.push(card);
     });
   });
-
   return blocos;
 }
 
 function criarPaginaPDF(origem) {
-  const pagina = document.createElement('section');
+  const pagina = document.createElement('div');
   pagina.className = 'pdf-page';
+  pagina.style.width = `${PDF_W}px`;
+  pagina.style.height = `${PDF_H}px`;
+  pagina.style.minHeight = `${PDF_H}px`;
+  pagina.style.maxHeight = `${PDF_H}px`;
 
   const header = criarCabecalhoPDF(origem);
+  const footer = criarRodapePDF(origem);
   const main = document.createElement('main');
   main.className = 'pdf-main';
-  const footer = criarRodapePDF(origem);
 
   pagina.append(header, main, footer);
-  return { pagina, main, header, footer };
+  document.getElementById('printContainer').appendChild(pagina);
+
+  // Força dimensões exatas e elimina qualquer margem lateral herdada.
+  header.style.width = `${PDF_W}px`;
+  header.style.margin = '0';
+  footer.style.width = `${PDF_W}px`;
+  footer.style.margin = '0';
+  main.style.width = `${PDF_W}px`;
+  main.style.margin = '0';
+  main.style.flex = 'none';
+  main.style.boxSizing = 'border-box';
+
+  const alturaMain = PDF_H - header.getBoundingClientRect().height - footer.getBoundingClientRect().height;
+  main.style.height = `${Math.max(0, alturaMain)}px`;
+  main.style.minHeight = `${Math.max(0, alturaMain)}px`;
+  main.style.maxHeight = `${Math.max(0, alturaMain)}px`;
+  return { pagina, main, alturaDisponivel: Math.max(0, alturaMain) };
 }
 
-function criarRaizPDF() {
-  let raiz = document.getElementById('pdfRenderRoot');
-  if (raiz) raiz.remove();
-
-  raiz = document.createElement('div');
-  raiz.id = 'pdfRenderRoot';
-  raiz.className = 'pdf-render-root';
-  document.body.appendChild(raiz);
-  return raiz;
+function criarMedidorBloco(bloco, largura) {
+  const medidor = document.createElement('div');
+  medidor.className = 'pdf-measure-block';
+  medidor.style.width = `${largura}px`;
+  medidor.style.position = 'fixed';
+  medidor.style.left = '-100000px';
+  medidor.style.top = '0';
+  medidor.style.visibility = 'hidden';
+  medidor.style.pointerEvents = 'none';
+  medidor.appendChild(bloco.cloneNode(true));
+  document.body.appendChild(medidor);
+  const altura = medidor.firstElementChild.getBoundingClientRect().height;
+  medidor.remove();
+  return altura;
 }
 
-function adicionarBlocoNaPaginaAtual(pagina, bloco) {
-  const clone = bloco.cloneNode(true);
-  pagina.main.appendChild(clone);
+async function montarPaginasPDF() {
+  const origem = document.querySelector('.page');
+  const container = document.getElementById('printContainer');
+  if (!origem || !container) throw new Error('Estrutura da página não encontrada.');
+  container.innerHTML = '';
+  container.className = 'pdf-document';
+  const blocos = prepararBlocosPDF(origem);
 
-  const estourou = pagina.main.scrollHeight > pagina.main.clientHeight + 1;
-  if (estourou) {
-    pagina.main.removeChild(clone);
-    return false;
-  }
-
-  return true;
-}
-
-function criarPaginaNova(origem, raiz) {
-  const pagina = criarPaginaPDF(origem);
-  raiz.appendChild(pagina.pagina);
-  return pagina;
-}
-
-function montarPaginasPDF() {
-  const origem = document.querySelector('body > .page');
-  if (!origem) throw new Error('Estrutura da página não encontrada.');
-
-  const raiz = criarRaizPDF();
-  const blocos = criarBlocosPDF(origem);
-
-  let paginaAtual = criarPaginaNova(origem, raiz);
+  let pagina = criarPaginaPDF(origem);
+  let alturaUsada = 0;
+  const larguraInterna = PDF_W - 64;
 
   for (const bloco of blocos) {
-    if (adicionarBlocoNaPaginaAtual(paginaAtual, bloco)) continue;
-
-    // Um bloco normal deve caber em uma página. Se não couber,
-    // tentamos colocar o conteúdo como uma unidade de texto menor.
-    const novaPagina = criarPaginaNova(origem, raiz);
-    if (adicionarBlocoNaPaginaAtual(novaPagina, bloco)) {
-      paginaAtual = novaPagina;
-      continue;
+    const alturaBloco = criarMedidorBloco(bloco, larguraInterna);
+    if (alturaUsada > 0 && alturaUsada + alturaBloco > pagina.alturaDisponivel) {
+      pagina = criarPaginaPDF(origem);
+      alturaUsada = 0;
     }
-
-    // Fallback para descrições excepcionalmente grandes: o navegador
-    // permite a quebra do texto dentro do item, sem perder conteúdo.
-    const item = novaPagina.main.lastElementChild;
-    if (item) item.style.overflow = 'visible';
-    paginaAtual = novaPagina;
+    pagina.main.appendChild(bloco);
+    alturaUsada += alturaBloco;
   }
 
-  return raiz;
+  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+  return [...container.querySelectorAll('.pdf-page')];
 }
 
-function esperarImagens(root) {
-  const imagens = [...root.querySelectorAll('img')];
-  return Promise.all(imagens.map(img => {
-    if (img.complete) return Promise.resolve();
-    return new Promise(resolve => {
-      img.addEventListener('load', resolve, { once: true });
-      img.addEventListener('error', resolve, { once: true });
+async function gerarPdfBlob() {
+  if (typeof html2canvas !== 'function') throw new Error('A biblioteca html2canvas não foi carregada no bundle.');
+  const paginas = await montarPaginasPDF();
+  await document.fonts?.ready;
+  const pdf = new jsPDF({ unit:'mm', format:'a4', orientation:'portrait', compress:true });
+  const scale = 2;
+
+  for (let i = 0; i < paginas.length; i++) {
+    const pagina = paginas[i];
+    const canvas = await html2canvas(pagina, {
+      backgroundColor: '#ffffff',
+      scale,
+      useCORS: true,
+      allowTaint: false,
+      width: PDF_W,
+      height: PDF_H,
+      windowWidth: PDF_W,
+      windowHeight: PDF_H,
+      scrollX: 0,
+      scrollY: 0,
+      logging: false
     });
-  }));
+    const imagem = canvas.toDataURL('image/jpeg', 0.95);
+    if (i > 0) pdf.addPage('a4', 'portrait');
+    pdf.addImage(imagem, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+  }
+
+  return pdf.output('blob');
 }
 
 function blobParaBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      const resultado = String(reader.result || '');
-      resolve(resultado.includes(',') ? resultado.split(',')[1] : resultado);
-    };
+    reader.onloadend = () => resolve(String(reader.result).split(',')[1]);
     reader.onerror = reject;
     reader.readAsDataURL(blob);
   });
 }
 
-function coletarDados() {
-  const secoes = [];
-
-  document.querySelectorAll('#secoesContainer .secao-editor').forEach((secao, indiceSecao) => {
-    const titulo = textoSeguro(secao.querySelector('[data-role="titulo"]')?.value);
-    if (!titulo) return;
-
-    const itens = [];
-    secao.querySelectorAll('.item-editor').forEach((item, indiceItem) => {
-      const caminho = textoSeguro(item.querySelector('[data-role="h3"]')?.value);
-      const descricao = textoSeguro(item.querySelector('[data-role="p"]')?.value);
-      if (!caminho && !descricao) return;
-
-      itens.push({
-        caminho_sistema: caminho,
-        descricao,
-        ordem: indiceItem + 1
-      });
-    });
-
-    secoes.push({
-      titulo,
-      ordem: indiceSecao + 1,
-      itens
-    });
+async function salvarNoServidor(dados, pdfBlob) {
+  const pdfBase64 = await blobParaBase64(pdfBlob);
+  const nomeArquivo = criarNomeArquivo(dados);
+  const resposta = await fetch('/.netlify/functions/salvar-versionamento', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...dados, nome_arquivo: nomeArquivo, pdf_base64: pdfBase64 })
   });
-
-  return {
-    modelo_sistema: modeloSelecionado.sigla,
-    versao: textoSeguro(document.querySelector('.versao-input')?.value),
-    data_digitada: textoSeguro(document.querySelector('.data-input')?.value),
-    secoes
-  };
-}
-
-function validarDados(dados) {
-  if (!modeloSelecionado) throw new Error('Selecione o modelo do sistema antes de gerar o PDF.');
-  if (!dados.versao) throw new Error('Informe a versão.');
-  if (!dados.data_digitada) throw new Error('Informe a data.');
-  if (!dados.secoes.length) throw new Error('Adicione pelo menos uma seção com título.');
-
-  for (const secao of dados.secoes) {
-    if (!secao.itens.length) {
-      throw new Error(`A seção "${secao.titulo}" precisa ter pelo menos um item.`);
-    }
-    for (const item of secao.itens) {
-      if (!item.caminho_sistema || !item.descricao) {
-        throw new Error(`Preencha o caminho e a descrição em todos os itens da seção "${secao.titulo}".`);
-      }
-    }
-  }
-}
-
-function nomeArquivoPDF(dados) {
-  const dataArquivo = dados.data_digitada.replace(/[^0-9-]/g, '-');
-  const versaoArquivo = dados.versao.replace(/[^a-zA-Z0-9._-]/g, '_');
-  return `${dados.modelo_sistema}_${versaoArquivo}_${dataArquivo}.pdf`;
-}
-
-async function gerarPDFBlob(raiz, nomeArquivo) {
-
-  await esperarImagens(raiz);
-  await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-  const paginas = [...raiz.querySelectorAll('.pdf-page')];
-  if (!paginas.length) throw new Error('Nenhuma página foi criada para o PDF.');
-
-  const pdf = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4',
-    compress: true
-  });
-
-  for (let i = 0; i < paginas.length; i++) {
-    const pagina = paginas[i];
-
-    const canvas = await html2canvas(pagina, {
-      scale: 2,
-      useCORS: true,
-      allowTaint: false,
-      backgroundColor: '#ffffff',
-      logging: false,
-      width: pagina.offsetWidth,
-      height: pagina.offsetHeight,
-      windowWidth: pagina.offsetWidth,
-      windowHeight: pagina.offsetHeight
-    });
-
-    if (i > 0) pdf.addPage('a4', 'portrait');
-
-    const imagem = canvas.toDataURL('image/jpeg', 0.96);
-    pdf.addImage(imagem, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
-  }
-
-  return pdf.output('blob');
+  let resultado;
+  try { resultado = await resposta.json(); }
+  catch { throw new Error(`O servidor retornou uma resposta inválida (HTTP ${resposta.status}).`); }
+  if (!resposta.ok || !resultado.ok) throw new Error(resultado?.error || 'Não foi possível salvar o versionamento.');
+  return resultado;
 }
 
 function baixarBlob(blob, nomeArquivo) {
@@ -370,73 +276,35 @@ function baixarBlob(blob, nomeArquivo) {
   document.body.appendChild(link);
   link.click();
   link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
 }
 
-async function salvarNoSupabase(dados, pdfBlob, nomeArquivo) {
-  const pdfBase64 = await blobParaBase64(pdfBlob);
-
-  const resposta = await fetch('/.netlify/functions/salvar-versionamento', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      ...dados,
-      nome_arquivo: nomeArquivo,
-      pdf_base64: pdfBase64
-    })
-  });
-
-  let resultado = {};
-  try {
-    resultado = await resposta.json();
-  } catch (_) {
-    resultado = {};
-  }
-
-  if (!resposta.ok || !resultado.ok) {
-    throw new Error(resultado.error || `Não foi possível salvar no servidor (HTTP ${resposta.status}).`);
-  }
-
-  return resultado;
-}
-
-async function gerarESalvarPDF() {
+async function imprimirPDF() {
   const botao = document.querySelector('.btn-pdf');
-  let raiz = null;
-
   try {
-    const dados = coletarDados();
-    validarDados(dados);
-
-    if (botao) {
-      botao.disabled = true;
-      botao.textContent = 'Gerando PDF...';
-    }
-
-    const nomeArquivo = nomeArquivoPDF(dados);
-    raiz = montarPaginasPDF();
-
-    // Não usa window.print(). O PDF é criado diretamente em memória.
-    const pdfBlob = await gerarPDFBlob(raiz, nomeArquivo);
-
-    if (botao) botao.textContent = 'Salvando...';
-    await salvarNoSupabase(dados, pdfBlob, nomeArquivo);
-
-    baixarBlob(pdfBlob, nomeArquivo);
-    alert('Versionamento salvo com sucesso e PDF gerado.');
+    const dados = coletarDadosVersionamento();
+    if (botao) { botao.disabled = true; botao.dataset.textoOriginal = botao.textContent; botao.textContent = 'Gerando e salvando PDF...'; }
+    const pdfBlob = await gerarPdfBlob();
+    const resultado = await salvarNoServidor(dados, pdfBlob);
+    baixarBlob(pdfBlob, resultado.nome_arquivo || criarNomeArquivo(dados));
+    document.getElementById('printContainer').innerHTML = '';
+    alert('Versionamento salvo com sucesso e PDF armazenado.');
   } catch (erro) {
-    console.error(erro);
-    alert(erro.message || 'Não foi possível gerar e salvar o PDF.');
+    console.error('Erro ao gerar/salvar versionamento:', erro);
+    alert(erro.message || 'Ocorreu um erro ao gerar ou salvar o versionamento.');
   } finally {
-    if (raiz) raiz.remove();
-    if (botao) {
-      botao.disabled = false;
-      botao.textContent = 'Gerar / Salvar PDF';
-    }
+    document.getElementById('printContainer').innerHTML = '';
+    if (botao) { botao.disabled = false; botao.textContent = botao.dataset.textoOriginal || 'Gerar / Salvar PDF'; }
   }
 }
+
+// O HTML usa onclick. O bundle precisa expor essas funções explicitamente no window.
+Object.assign(window, {
+  selecionarModelo,
+  adicionarSecao,
+  adicionarItem,
+  removerSecao,
+  imprimirPDF
+});
 
 adicionarSecao();
-
-// As funções são expostas ao HTML porque os botões usam onclick.
-Object.assign(window, { selecionarModelo, adicionarSecao, adicionarItem, removerSecao, gerarESalvarPDF });

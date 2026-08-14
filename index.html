@@ -12,26 +12,18 @@
   <div class="modelo-box">
     <h2>Selecione o modelo</h2>
     <p>Escolha qual modelo será utilizado neste documento:</p>
-
     <div class="modelo-opcoes">
       <button type="button" class="modelo-opcao" onclick="selecionarModelo('PCA')">
-        <strong>PCA</strong>
-        <span>Prestação de Contas e Auditoria</span>
+        <strong>PCA</strong><span>Prestação de Contas e Auditoria</span>
       </button>
-
       <button type="button" class="modelo-opcao" onclick="selecionarModelo('CIA')">
-        <strong>CIA</strong>
-        <span>Controle Interno e Auditoria</span>
+        <strong>CIA</strong><span>Controle Interno e Auditoria</span>
       </button>
-
       <button type="button" class="modelo-opcao" onclick="selecionarModelo('PTM')">
-        <strong>PTM</strong>
-        <span>Portal da Transparência Municipal</span>
+        <strong>PTM</strong><span>Portal da Transparência Municipal</span>
       </button>
-
       <button type="button" class="modelo-opcao" onclick="selecionarModelo('PTM_ADM')">
-        <strong>PTM_ADM</strong>
-        <span>Portal da Transparência Municipal Administrativo</span>
+        <strong>PTM_ADM</strong><span>Portal da Transparência Municipal Administrativo</span>
       </button>
     </div>
   </div>
@@ -47,31 +39,21 @@
       </div>
     </div>
     <div class="version-tag">
-      <div class="versão">
-        <input class="versao-input" placeholder="EX.: vX.XX.X">
-      </div>
-      <div class="data">
-        <input class="data-input" type="text" placeholder="dd/mm/aaaa">
-      </div>
+      <div class="versão"><input class="versao-input" placeholder="EX.: vX.XX.X"></div>
+      <div class="data"><input class="data-input" type="text" placeholder="dd/mm/aaaa"></div>
     </div>
   </header>
 
   <main>
     <div class="wrap">
       <p class="sub" id="textoIntroducao"></p>
-
       <div class="painel" id="secoesContainer"></div>
-
       <div class="linha-botoes">
-        <button class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
-        <button class="btn-pdf" onclick="gerarESalvarPDF()">Gerar / Salvar PDF</button>
+        <button type="button" class="btn-secao" onclick="adicionarSecao()">+ Adicionar seção</button>
+        <button type="button" class="btn-pdf" onclick="imprimirPDF()">Gerar / Salvar PDF</button>
       </div>
     </div>
-
-    <div id="previewContainer" aria-hidden="true">
-      <div class="preview-doc" id="previewDoc"></div>
-    </div>
-
+    <div id="previewContainer" aria-hidden="true"><div class="preview-doc" id="previewDoc"></div></div>
     <div id="printContainer" aria-hidden="true"></div>
   </main>
 
@@ -83,7 +65,6 @@
   </footer>
 </div>
 
-<!-- O build do Netlify gera script.bundle.js com html2canvas e jsPDF incluídos localmente. -->
-<script src="script.js"></script>
+<script src="script.bundle.js"></script>
 </body>
 </html>
