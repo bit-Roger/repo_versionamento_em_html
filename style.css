@@ -1,5 +1,4 @@
-
-  :root {
+:root {
     --vinho: #7a0c1e;
     --vinho-escuro: #4d020c;
     --vermelho-faixa: #990800;
@@ -11,13 +10,13 @@
     --linha: #d9d9d9;
     --texto-suave: #6b6b6b;
   }
-
+ 
   * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
   }
-
+ 
   body {
     font-family: "Segoe UI", Arial, Helvetica, sans-serif;
     background: #f2f2f2;
@@ -25,7 +24,7 @@
     line-height: 1.5;
     padding: 24px 0 60px;
   }
-
+ 
   .page {
     width: 210mm;
     min-height: 297mm;
@@ -48,7 +47,7 @@
     justify-content: space-between;
     position: relative;
   }
-
+ 
   header.top::after {
     content: "";
     position: absolute;
@@ -58,19 +57,19 @@
     height: 6px;
     background: var(--vermelho-faixa);
   }
-
+ 
   .brand {
     display: flex;
     align-items: center;
     gap: 16px;
   }
-
+ 
   .logo {
     width: 56px;
     height: 56px;
     flex-shrink: 0;
   }
-
+ 
   .logo img {
     width: 100%;
     height: 100%;
@@ -80,55 +79,35 @@
     border-radius: 25%;
     padding: 3px;
   }
-
+ 
   .brand h1 {
     font-size: 22px;
     letter-spacing: 0.3px;
     margin-bottom: 4px;
   }
-
+ 
   .brand p {
     font-size: 13px;
     opacity: 0.9;
   }
+ 
 
-  .version-tag {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.4);
-    border-radius: 6px;
-    padding: 8px 16px;
-    text-align: center;
-    min-width: 100px;
-  }
-
-  .version-tag .versão {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #000;
-    font-weight: 700;
-    font-size: 15px;
-  }
-
-  .version-tag .data {
-    font-size: 12px;
-    opacity: 0.85;
-    margin-top: 2px;
-  }
-
+ 
   main {
     padding: 32px;
     flex: 1;
   }
-
+ 
   .intro {
     margin-bottom: 28px;
     color: var(--texto);
     font-size: 15px;
   }
-
+ 
   .section {
     margin-bottom: 28px;
   }
-
+ 
   .section-title {
     background: var(--vinho);
     color: #fff;
@@ -139,7 +118,7 @@
     border-radius: 4px;
     margin-bottom: 12px;
   }
-
+ 
   .item {
     background: var(--rosa-claro);
     border-left: 4px solid var(--vermelho-faixa);
@@ -147,22 +126,22 @@
     padding: 12px 16px;
     margin-bottom: 10px;
   }
-
+ 
   .item:last-child {
     margin-bottom: 0;
   }
-
+ 
   .item h3 {
     font-size: 14px;
     color: var(--vermelho-faixa);
     margin-bottom: 4px;
   }
-
+ 
   .item p {
     font-size: 13.5px;
     color: var(--texto);
   }
-
+ 
   footer.bottom {
     background: var(--vinho);
     color: #fff;
@@ -174,17 +153,17 @@
     box-sizing: border-box;
     border-radius: 6px;
   }
-
+ 
   footer.bottom .company {
     font-weight: 700;
     font-size: 13px;
     margin-bottom: 2px;
   }
-
+ 
   footer.bottom .tagline {
     opacity: 0.85;
   }
-
+ 
   @media (max-width: 600px) {
     header.top, footer.bottom, main {
       padding-left: 18px;
@@ -209,7 +188,7 @@
   .wrap{max-width:920px;margin:0 auto;}
   h1{font-size:1.4rem;margin:0 0 4px;}
   .sub{color:var(--texto-suave);font-size:.92rem;margin:0 0 28px;}
-
+ 
   .painel{
     background:var(--card);
     border:1px solid var(--linha);
@@ -217,7 +196,7 @@
     padding:20px;
     margin-bottom:22px;
   }
-
+ 
   .secao-editor{
     border:1px dashed var(--linha);
     border-radius:10px;
@@ -237,7 +216,7 @@
     margin-bottom:14px;
   }
   .secao-titulo-input:focus{outline:none;border-color:var(--vinho-escuro);}
-
+ 
   .item-editor{
     background:#faf8f6;
     border:1px solid var(--linha);
@@ -267,7 +246,48 @@
     outline:none;border-color:var(--vinho);
   }
   .caminho-hint{font-size:.72rem;color:var(--texto-suave);margin-top:3px;}
-
+ 
+  /*
+   * Painel de versões: segue o mesmo padrão visual dos itens
+   * de seção (adicionar/remover), mas para números de versão.
+   */
+  .versao-editor{
+    background:#faf8f6;
+    border:1px solid var(--linha);
+    border-radius:8px;
+    padding:12px 14px;
+    margin-bottom:10px;
+    position:relative;
+  }
+  .versao-editor label{
+    display:block;
+    font-size:.72rem;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    color:var(--texto-suave);
+    margin:0 0 3px;
+  }
+  .versao-editor .versao-input-item{
+    width:100%;
+    font-size:.92rem;
+    padding:8px 10px;
+    border:1px solid var(--linha);
+    border-radius:6px;
+    font-family:inherit;
+  }
+  .versao-editor .versao-input-item:focus{
+    outline:none;border-color:var(--vinho);
+  }
+  .btn-remover-versao{
+    position:absolute;
+    top:10px;
+    right:10px;
+    background:transparent;
+    color:#a33;
+    font-size:.78rem;
+    padding:4px 8px;
+  }
+ 
   .linha-botoes{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
   button{
     cursor:pointer;
@@ -287,7 +307,7 @@
   .btn-gerar{background:#2b2320;color:#fff;padding:11px 18px;}
   .btn-gerar:hover{background:#000;}
   .remover-secao{position:absolute;top:14px;right:14px;}
-
+ 
   .saida{
     background:#1e1a18;
     color:#eee;
@@ -310,18 +330,18 @@
     padding:12px;
     white-space:pre;
   }
-
-
+ 
+ 
 /* =========================================================
    PDF / IMPRESSÃO
    Cada página é criada pelo JavaScript como uma folha A4
    independente, com cabeçalho e rodapé próprios.
    ========================================================= */
-
+ 
 #printContainer {
   display: none;
 }
-
+ 
 .pdf-document,
 .pdf-page,
 .pdf-main,
@@ -329,7 +349,7 @@
 .pdf-page footer.bottom {
   box-sizing: border-box;
 }
-
+ 
 .pdf-page {
   width: 210mm;
   height: 297mm;
@@ -347,12 +367,12 @@
   break-after: page;
   page-break-after: always;
 }
-
+ 
 .pdf-page:last-child {
   break-after: auto;
   page-break-after: auto;
 }
-
+ 
 .pdf-page header.top {
   width: 100%;
   min-width: 100%;
@@ -361,7 +381,7 @@
   border-radius: 0;
   overflow: visible;
 }
-
+ 
 .pdf-page footer.bottom {
   width: 100%;
   min-width: 100%;
@@ -370,7 +390,7 @@
   border-radius: 0;
   overflow: hidden;
 }
-
+ 
 .pdf-main {
   width: 100%;
   min-width: 0;
@@ -381,17 +401,17 @@
   overflow: hidden;
   background: #fff;
 }
-
+ 
 .pdf-main > .pdf-intro {
   margin: 0 0 28px;
 }
-
+ 
 .pdf-section-title,
 .pdf-item {
   break-inside: avoid;
   page-break-inside: avoid;
 }
-
+ 
 .pdf-section-title {
   background: var(--vinho) !important;
   color: #fff !important;
@@ -402,7 +422,7 @@
   border-radius: 4px;
   margin: 0 0 12px;
 }
-
+ 
 .pdf-item {
   background: var(--rosa-claro) !important;
   border-left: 4px solid var(--vermelho-faixa) !important;
@@ -412,13 +432,13 @@
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-
+ 
 .pdf-item h3 {
   font-size: 14px;
   color: var(--vermelho-faixa) !important;
   margin: 0 0 4px;
 }
-
+ 
 .pdf-item p {
   font-size: 13.5px;
   color: var(--texto) !important;
@@ -428,25 +448,9 @@
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+ 
 
-.pdf-page .versao-print,
-.pdf-page .data-print {
-  display: block;
-}
-
-.pdf-page .versao-print {
-  font-family: Arial, Helvetica, sans-serif;
-  color: #000;
-  font-weight: 700;
-  font-size: 15px;
-}
-
-.pdf-page .data-print {
-  font-size: 12px;
-  opacity: .85;
-  margin-top: 2px;
-}
-
+ 
 .pdf-measure {
   position: fixed;
   left: -100000px;
@@ -457,7 +461,7 @@
   visibility: hidden;
   pointer-events: none;
 }
-
+ 
 .pdf-measure-block {
   position: fixed;
   left: -100000px;
@@ -466,13 +470,13 @@
   visibility: hidden;
   pointer-events: none;
 }
-
+ 
 @media print {
   @page {
     size: A4 portrait;
     margin: 0 !important;
   }
-
+ 
   html,
   body {
     width: 100% !important;
@@ -483,17 +487,17 @@
     padding: 0 !important;
     background: #fff !important;
   }
-
+ 
   body {
     display: block !important;
   }
-
+ 
   /* O formulário original nunca entra no PDF. */
   body > .page,
   body > #modeloOverlay {
     display: none !important;
   }
-
+ 
   /* O container do PDF começa exatamente na borda da folha. */
   body > #printContainer {
     display: block !important;
@@ -509,12 +513,12 @@
     visibility: visible !important;
     overflow: visible !important;
   }
-
+ 
   #printContainer,
   #printContainer * {
     visibility: visible !important;
   }
-
+ 
   #printContainer .pdf-page {
     width: 210mm !important;
     height: 297mm !important;
@@ -532,12 +536,12 @@
     break-after: page !important;
     page-break-after: always !important;
   }
-
+ 
   #printContainer .pdf-page:last-child {
     break-after: auto !important;
     page-break-after: auto !important;
   }
-
+ 
   #printContainer .pdf-page header.top {
     width: 210mm !important;
     min-width: 210mm !important;
@@ -549,7 +553,7 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
+ 
   #printContainer .pdf-page header.top::after {
     left: 0 !important;
     right: 0 !important;
@@ -557,7 +561,7 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
+ 
   #printContainer .pdf-page footer.bottom {
     width: 210mm !important;
     min-width: 210mm !important;
@@ -569,7 +573,7 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
+ 
   #printContainer .pdf-main {
     width: 210mm !important;
     min-width: 210mm !important;
@@ -580,25 +584,25 @@
     overflow: hidden !important;
     background: #fff !important;
   }
-
+ 
   #printContainer .pdf-section-title,
   #printContainer .pdf-item,
   #printContainer .pdf-intro {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-
+ 
   #printContainer .pdf-section-title,
   #printContainer .pdf-item {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
   }
-
+ 
   #printContainer .pdf-item {
     overflow-wrap: anywhere !important;
     word-break: break-word !important;
   }
-
+ 
   #printContainer button,
   #printContainer .linha-botoes,
   #printContainer .caminho-hint,
@@ -608,7 +612,7 @@
     display: none !important;
   }
 }
-
+ 
     .modelo-overlay {
     position: fixed;
     inset: 0;
@@ -620,7 +624,7 @@
     padding: 20px;
     box-sizing: border-box;
   }
-
+ 
   .modelo-box {
     width: min(620px, 100%);
     padding: 30px;
@@ -630,20 +634,20 @@
     text-align: center;
     box-sizing: border-box;
   }
-
+ 
   .modelo-box h2 {
     margin: 0 0 10px;
   }
-
+ 
   .modelo-box > p {
     margin: 0 0 25px;
   }
-
+ 
   .modelo-opcoes {
     display: grid;
     gap: 15px;
   }
-
+ 
   .modelo-opcao {
     width: 100%;
     border: 1px solid #ccc;
@@ -655,30 +659,30 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
   }
-
+ 
   .modelo-opcao:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
   }
-
+ 
   .modelo-opcao strong {
     display: block;
     font-size: 20px;
     margin-bottom: 5px;
   }
-
+ 
   .modelo-opcao span {
     display: block;
     font-size: 14px;
   }
-
+ 
   /* O seletor nunca deve aparecer no documento impresso */
   @media print {
     #modeloOverlay {
       display: none !important;
     }
   }
-
+ 
 /* =========================================================
    PDF DIRETO: html2canvas + jsPDF
    Não usa window.print() nem @media print.
@@ -697,7 +701,7 @@
   pointer-events: none;
   z-index: -1000;
 }
-
+ 
 #printContainer .pdf-page {
   width: 794px !important;
   height: 1123px !important;
@@ -715,7 +719,7 @@
   display: flex !important;
   flex-direction: column !important;
 }
-
+ 
 #printContainer .pdf-page header.top {
   width: 794px !important;
   min-width: 794px !important;
@@ -725,13 +729,13 @@
   flex: 0 0 auto !important;
   box-sizing: border-box !important;
 }
-
+ 
 #printContainer .pdf-page header.top::after {
   left: 0 !important;
   right: 0 !important;
   width: 100% !important;
 }
-
+ 
 #printContainer .pdf-page footer.bottom {
   width: 794px !important;
   min-width: 794px !important;
@@ -741,7 +745,7 @@
   flex: 0 0 auto !important;
   box-sizing: border-box !important;
 }
-
+ 
 #printContainer .pdf-main {
   width: 794px !important;
   box-sizing: border-box !important;
@@ -750,32 +754,32 @@
   flex: 0 0 auto !important;
   background: #fff !important;
 }
-
+ 
 #printContainer .pdf-main > .pdf-intro {
   margin: 0 0 28px !important;
 }
-
+ 
 #printContainer .pdf-section-title,
 #printContainer .pdf-item {
   break-inside: avoid;
   page-break-inside: avoid;
 }
-
+ 
 .pdf-measure-block {
   box-sizing: border-box;
   background: #fff;
 }
-
+ 
 .pdf-measure-block .pdf-item,
 .pdf-measure-block .pdf-section-title,
 .pdf-measure-block .pdf-intro {
   break-inside: avoid;
   page-break-inside: avoid;
 }
-
+ 
 /* Estado fechado do seletor de modelo: o fechamento não depende de onclick inline. */
 .modelo-overlay.fechado { display: none !important; }
-
+ 
 /* PDF: folha A4 sem margens laterais e com cabeçalho/rodapé repetidos. */
 #printContainer.pdf-document {
   position: fixed !important;
@@ -808,4 +812,35 @@
   width: 794px !important; box-sizing: border-box !important;
   margin: 0 !important; overflow: visible !important; flex: 0 0 auto !important;
   background: #fff !important;
+}
+/* =========================================================
+   VERSÕES ACIMA DAS SEÇÕES NO PDF
+   ========================================================= */
+
+.pdf-versoes-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 18px 0;
+}
+
+.pdf-versoes-topo .versao-print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: Arial, Helvetica, sans-serif;
+  color: #fff;
+  background: var(--vinho);
+
+  font-weight: 700;
+  font-size: 14px;
+
+  padding: 8px 14px;
+
+  border-radius: 5px;
+
+  white-space: nowrap;
 }

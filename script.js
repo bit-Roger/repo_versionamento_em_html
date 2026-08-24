@@ -37,6 +37,7 @@
 
   let modeloSelecionado = null;
   let contadorSecao = 0;
+  let contadorVersao = 0;
 
   /*
    * Dimensões usadas para a montagem do PDF.
@@ -85,6 +86,52 @@
   }
 
   /* =========================================================
+     VERSÕES
+     ========================================================= */
+
+  function adicionarVersao() {
+    contadorVersao++;
+
+    const id = contadorVersao;
+
+    const container = document.getElementById('conteudoContainer');
+
+    if (!container) return;
+
+    const div = document.createElement('div');
+
+    div.className = 'versao-editor';
+    div.id = `versao-${id}`;
+
+    div.innerHTML = `
+      <button
+        type="button"
+        class="btn-remover btn-remover-versao"
+        data-action="remover-versao"
+        data-id="${id}">
+        remover versão ✕
+      </button>
+
+      <label>Versão</label>
+
+      <input
+        class="versao-input-item"
+        placeholder="Ex.: vX.XX.X"
+        data-role="versao">
+    `;
+
+    container.appendChild(div);
+  }
+
+  function removerVersao(id) {
+    const versao = document.getElementById(`versao-${id}`);
+
+    if (versao) {
+      versao.remove();
+    }
+  }
+
+  /* =========================================================
      SEÇÕES
      ========================================================= */
 
@@ -93,7 +140,7 @@
 
     const id = contadorSecao;
 
-    const container = document.getElementById('secoesContainer');
+    const container = document.getElementById('conteudoContainer');
 
     if (!container) return;
 
@@ -188,116 +235,118 @@
      ========================================================= */
 
   function coletarDadosVersionamento() {
-    if (!modeloSelecionado) {
+  if (!modeloSelecionado) {
+    throw new Error(
+      'Selecione o modelo do sistema antes de gerar o PDF.'
+    );
+  }
+
+  const versoes = [
+    ...document.querySelectorAll('.versao-editor')
+  ]
+    .map(versao =>
+      textoSeguro(
+        versao.querySelector('[data-role="versao"]')?.value
+      )
+    )
+    .filter(valor => valor.length > 0);
+
+  if (!versoes.length) {
+    throw new Error('Informe pelo menos uma versão.');
+  }
+
+  const secoes = [
+    ...document.querySelectorAll('.secao-editor')
+  ].map((secao, index) => {
+
+    const titulo = textoSeguro(
+      secao.querySelector('[data-role="titulo"]')?.value
+    );
+
+    if (!titulo) {
       throw new Error(
-        'Selecione o modelo do sistema antes de gerar o PDF.'
+        `Informe o título da seção ${index + 1}.`
       );
     }
 
-    const versao = textoSeguro(
-      document.querySelector('.versao-input')?.value
-    );
+    const itens = [
+      ...secao.querySelectorAll('.item-editor')
+    ].map((item, itemIndex) => {
 
-    const data_digitada = textoSeguro(
-      document.querySelector('.data-input')?.value
-    );
-
-    if (!versao) {
-      throw new Error('Informe a versão.');
-    }
-
-    if (!data_digitada) {
-      throw new Error('Informe a data.');
-    }
-
-    const secoes = [
-      ...document.querySelectorAll('.secao-editor')
-    ].map((secao, index) => {
-      const titulo = textoSeguro(
-        secao.querySelector('[data-role="titulo"]')?.value
+      const caminho_sistema = textoSeguro(
+        item.querySelector('[data-role="h3"]')?.value
       );
 
-      if (!titulo) {
+      const descricao = textoSeguro(
+        item.querySelector('[data-role="p"]')?.value
+      );
+
+      if (!caminho_sistema) {
         throw new Error(
-          `Informe o título da seção ${index + 1}.`
+          `Informe o caminho no sistema do item ${
+            itemIndex + 1
+          } da seção "${titulo}".`
         );
       }
 
-      const itens = [
-        ...secao.querySelectorAll('.item-editor')
-      ].map((item, itemIndex) => {
-        const caminho_sistema = textoSeguro(
-          item.querySelector('[data-role="h3"]')?.value
-        );
-
-        const descricao = textoSeguro(
-          item.querySelector('[data-role="p"]')?.value
-        );
-
-        if (!caminho_sistema) {
-          throw new Error(
-            `Informe o caminho no sistema do item ${
-              itemIndex + 1
-            } da seção "${titulo}".`
-          );
-        }
-
-        if (!descricao) {
-          throw new Error(
-            `Informe a descrição do item ${
-              itemIndex + 1
-            } da seção "${titulo}".`
-          );
-        }
-
-        return {
-          caminho_sistema,
-          descricao,
-          ordem: itemIndex + 1
-        };
-      });
-
-      if (!itens.length) {
+      if (!descricao) {
         throw new Error(
-          `A seção "${titulo}" precisa ter pelo menos um item.`
+          `Informe a descrição do item ${
+            itemIndex + 1
+          } da seção "${titulo}".`
         );
       }
 
       return {
-        titulo,
-        ordem: index + 1,
-        itens
+        caminho_sistema,
+        descricao,
+        ordem: itemIndex + 1
       };
     });
 
-    if (!secoes.length) {
-      throw new Error('Adicione pelo menos uma seção.');
+    if (!itens.length) {
+      throw new Error(
+        `A seção "${titulo}" precisa ter pelo menos um item.`
+      );
     }
 
     return {
-      modelo_sistema: modeloSelecionado.sigla,
-      versao,
-      data_digitada,
-      secoes
+      titulo,
+      ordem: index + 1,
+      itens
     };
+  });
+
+  if (!secoes.length) {
+    throw new Error('Adicione pelo menos uma seção.');
   }
+
+  return {
+    modelo_sistema: modeloSelecionado.sigla,
+    versoes,
+    secoes
+  };
+}
 
   /* =========================================================
      NOME DO ARQUIVO
      ========================================================= */
 
   function criarNomeArquivo(dados) {
-    const versao = dados.versao.replace(
-      /[^a-zA-Z0-9._-]/g,
-      '_'
-    );
+  const versao = dados.versoes
+    .join('_')
+    .replace(/[^a-zA-Z0-9._-]/g, '_');
 
-    const data = new Date()
-      .toISOString()
-      .replace(/[:.]/g, '-');
+  const agora = new Date();
 
-    return `${dados.modelo_sistema}_${versao}_${data}.pdf`;
-  }
+  const dia = String(agora.getDate()).padStart(2, '0');
+  const mes = String(agora.getMonth() + 1).padStart(2, '0');
+  const ano = agora.getFullYear();
+
+  const data = `${dia}-${mes}-${ano}`;
+
+  return `${dados.modelo_sistema}_${versao}_${data}.pdf`;
+}
 
   /* =========================================================
      ELEMENTOS DO PDF
@@ -321,76 +370,35 @@
      ========================================================= */
 
   function criarCabecalhoPDF(origem) {
-    const headerOriginal =
-      origem.querySelector('header.top');
+  const headerOriginal =
+    origem.querySelector('header.top');
 
-    if (!headerOriginal) {
-      throw new Error(
-        'Cabeçalho da página não encontrado.'
-      );
-    }
-
-    const header =
-      headerOriginal.cloneNode(true);
-
-    const versao = textoSeguro(
-      origem.querySelector('.versao-input')?.value
+  if (!headerOriginal) {
+    throw new Error(
+      'Cabeçalho da página não encontrado.'
     );
-
-    const data = textoSeguro(
-      origem.querySelector('.data-input')?.value
-    );
-
-    const vi =
-      header.querySelector('.versao-input');
-
-    const di =
-      header.querySelector('.data-input');
-
-    if (vi) {
-      vi.replaceWith(
-        textoElemento(
-          versao,
-          'div',
-          'versao-print'
-        )
-      );
-    }
-
-    if (di) {
-      di.replaceWith(
-        textoElemento(
-          data,
-          'div',
-          'data-print'
-        )
-      );
-    }
-
-    header.classList.add('pdf-header');
-
-    /*
-     * IMPORTANTE:
-     * Estas propriedades são colocadas diretamente aqui
-     * para que o PDF não dependa do @media print.
-     */
-
-    header.style.width = `${PDF_W}px`;
-    header.style.boxSizing = 'border-box';
-    header.style.flex = '0 0 auto';
-    header.style.margin = '0';
-    header.style.borderRadius = '0';
-    header.style.position = 'relative';
-    header.style.display = 'flex';
-    header.style.alignItems = 'center';
-    header.style.justifyContent = 'space-between';
-    header.style.background = '#7a0c1e';
-    header.style.color = '#fff';
-    header.style.padding = '24px 32px';
-
-    return header;
   }
 
+  const header =
+    headerOriginal.cloneNode(true);
+
+  header.classList.add('pdf-header');
+
+  header.style.width = `${PDF_W}px`;
+  header.style.boxSizing = 'border-box';
+  header.style.flex = '0 0 auto';
+  header.style.margin = '0';
+  header.style.borderRadius = '0';
+  header.style.position = 'relative';
+  header.style.display = 'flex';
+  header.style.alignItems = 'center';
+  header.style.justifyContent = 'space-between';
+  header.style.background = '#7a0c1e';
+  header.style.color = '#fff';
+  header.style.padding = '24px 32px';
+
+  return header;
+}
   /* =========================================================
      RODAPÉ
      ========================================================= */
@@ -463,6 +471,44 @@
 
       blocos.push(introducao);
     }
+
+    /* =========================================================
+   VERSÕES
+   As versões ficam acima das seções e lado a lado.
+   ========================================================= */
+
+const versoes = [
+  ...origem.querySelectorAll('.versao-editor')
+]
+  .map(versao =>
+    textoSeguro(
+      versao.querySelector('[data-role="versao"]')?.value
+    )
+  )
+  .filter(valor => valor.length > 0);
+
+if (versoes.length) {
+  const versoesWrap =
+    document.createElement('div');
+
+  versoesWrap.className =
+    'pdf-versoes-topo';
+
+  versoes.forEach(versao => {
+    const versaoElemento =
+      textoElemento(
+        versao,
+        'div',
+        'versao-print'
+      );
+
+    versoesWrap.appendChild(
+      versaoElemento
+    );
+  });
+
+  blocos.push(versoesWrap);
+}
 
     origem
       .querySelectorAll('.secao-editor')
@@ -1403,6 +1449,88 @@
 
     document
       .getElementById(
+        'btnAdicionarVersao'
+      )
+      ?.addEventListener(
+        'click',
+        adicionarVersao
+      );
+
+    document
+  .getElementById('conteudoContainer')
+  ?.addEventListener(
+    'click',
+    e => {
+
+      const btn = e.target.closest('[data-action]');
+
+      if (!btn) return;
+
+      const acao = btn.dataset.action;
+
+      /* =========================
+         REMOVER VERSÃO
+         ========================= */
+
+      if (acao === 'remover-versao') {
+
+        removerVersao(
+          Number(btn.dataset.id)
+        );
+
+        return;
+      }
+
+
+      /* =========================
+         REMOVER SEÇÃO
+         ========================= */
+
+      if (acao === 'remover-secao') {
+
+        removerSecao(
+          Number(btn.dataset.id)
+        );
+
+        return;
+      }
+
+
+      /* =========================
+         ADICIONAR ITEM
+         ========================= */
+
+      if (acao === 'adicionar-item') {
+
+        adicionarItem(
+          Number(btn.dataset.id)
+        );
+
+        return;
+      }
+
+
+      /* =========================
+         REMOVER ITEM
+         ========================= */
+
+      if (acao === 'remover-item') {
+
+        const item =
+          btn.closest('.item-editor');
+
+        if (item) {
+          item.remove();
+        }
+
+        return;
+      }
+
+    }
+  );
+
+    document
+      .getElementById(
         'btnAdicionarSecao'
       )
       ?.addEventListener(
@@ -1419,63 +1547,14 @@
         imprimirPDF
       );
 
-    document
-      .getElementById(
-        'secoesContainer'
-      )
-      ?.addEventListener(
-        'click',
-        e => {
-          const btn =
-            e.target.closest(
-              '[data-action]'
-            );
-
-          if (!btn) return;
-
-          const action =
-            btn.dataset.action;
-
-          if (
-            action ===
-            'adicionar-item'
-          ) {
-            adicionarItem(
-              Number(
-                btn.dataset.id
-              )
-            );
-          }
-
-          if (
-            action ===
-            'remover-secao'
-          ) {
-            removerSecao(
-              Number(
-                btn.dataset.id
-              )
-            );
-          }
-
-          if (
-            action ===
-            'remover-item'
-          ) {
-            btn
-              .closest(
-                '.item-editor'
-              )
-              ?.remove();
-          }
-        }
-      );
+ 
 
     /*
-     * Cria a primeira seção automaticamente.
+     * Cria a primeira versão e a primeira seção
+     * automaticamente.
      */
 
-    adicionarSecao();
+    adicionarVersao();
   }
 
   /* =========================================================
@@ -1486,6 +1565,8 @@
     window,
     {
       selecionarModelo,
+      adicionarVersao,
+      removerVersao,
       adicionarSecao,
       adicionarItem,
       removerSecao,
