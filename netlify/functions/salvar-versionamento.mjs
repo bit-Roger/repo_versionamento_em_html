@@ -28,9 +28,9 @@ function validarPayload(body) {
     throw new Error("Dados inválidos.");
   }
 
-  if (!body.modelo_sistema || !body.versao || !body.data_digitada) {
-    throw new Error("Modelo, versão e data são obrigatórios.");
-  }
+ if (!body.modelo_sistema || !body.versao) {
+  throw new Error("Modelo e versão são obrigatórios.");
+}
 
   if (!Array.isArray(body.secoes) || body.secoes.length === 0) {
     throw new Error("É necessário informar pelo menos uma seção.");
