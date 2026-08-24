@@ -337,15 +337,7 @@
     .join('_')
     .replace(/[^a-zA-Z0-9._-]/g, '_');
 
-  const agora = new Date();
-
-  const dia = String(agora.getDate()).padStart(2, '0');
-  const mes = String(agora.getMonth() + 1).padStart(2, '0');
-  const ano = agora.getFullYear();
-
-  const data = `${dia}-${mes}-${ano}`;
-
-  return `${dados.modelo_sistema}_${versao}_${data}.pdf`;
+  return `${dados.modelo_sistema}_${versao}.pdf`;
 }
 
   /* =========================================================
