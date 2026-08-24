@@ -28,32 +28,8 @@ function validarPayload(body) {
     throw new Error("Dados inválidos.");
   }
 
- if (!body.modelo_sistema || !body.versao) {
-  throw new Error("Modelo e versão são obrigatórios.");
-}
-
-  if (!Array.isArray(body.secoes) || body.secoes.length === 0) {
-    throw new Error("É necessário informar pelo menos uma seção.");
-  }
-
   if (!body.pdf_base64) {
     throw new Error("PDF não recebido.");
-  }
-
-  for (const secao of body.secoes) {
-    if (!secao.titulo) {
-      throw new Error("Todas as seções precisam de título.");
-    }
-
-    if (!Array.isArray(secao.itens) || secao.itens.length === 0) {
-      throw new Error(`A seção "${secao.titulo}" precisa ter pelo menos um item.`);
-    }
-
-    for (const item of secao.itens) {
-      if (!item.caminho_sistema || !item.descricao) {
-        throw new Error("Todos os itens precisam de caminho e descrição.");
-      }
-    }
   }
 }
 
