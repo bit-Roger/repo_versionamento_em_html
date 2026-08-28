@@ -116,7 +116,7 @@
 
       <input
         class="versao-input-item"
-        placeholder="Ex.: vX.XX.X"
+        placeholder="Ex.: vX.XX.X - dd/mm/aaaa"
         data-role="versao">
     `;
 
