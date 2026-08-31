@@ -775,26 +775,37 @@ if (versoes.length) {
       footer.getBoundingClientRect()
         .height;
 
-    const disponivel =
+    const alturaMain =
       Math.max(
         1,
         PDF_H - h - f
       );
 
     main.style.height =
-      `${disponivel}px`;
+      `${alturaMain}px`;
 
     main.style.minHeight =
-      `${disponivel}px`;
+      `${alturaMain}px`;
 
     main.style.maxHeight =
-      `${disponivel}px`;
+      `${alturaMain}px`;
+
+    /*
+     * A altura da página inclui o padding vertical de 32px do
+     * conteúdo. Para decidir se um bloco cabe, use somente a área
+     * interna disponível; caso contrário a quebra acontece tarde e
+     * o final do conteúdo é cortado pelo rodapé.
+     */
+    const estiloMain = getComputedStyle(main);
+    const paddingVertical =
+      parseFloat(estiloMain.paddingTop) +
+      parseFloat(estiloMain.paddingBottom);
 
     return {
       pagina,
       main,
       alturaDisponivel:
-        disponivel
+        Math.max(1, alturaMain - paddingVertical)
     };
   }
 
@@ -1000,9 +1011,23 @@ if (versoes.length) {
         usado = 0;
       }
 
-      pagina.main.appendChild(
-        bloco
-      );
+      pagina.main.appendChild(bloco);
+
+      /*
+       * A medição prévia cobre a maior parte dos casos. Esta segunda
+       * checagem usa o layout real e evita falhas causadas por fontes,
+       * margens ou quebras de linha que variam entre navegadores.
+       */
+      if (
+        usado > 0 &&
+        pagina.main.scrollHeight >
+          pagina.main.clientHeight
+      ) {
+        bloco.remove();
+        pagina = criarPaginaPDF(origem);
+        pagina.main.appendChild(bloco);
+        usado = 0;
+      }
 
       usado += altura;
     }
