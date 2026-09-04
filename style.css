@@ -826,7 +826,8 @@
   margin: 0 0 18px 0;
 }
 
-.pdf-versoes-topo .versao-print {
+.pdf-versoes-topo .versao-print,
+.pdf-main > .versao-print {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -843,4 +844,7 @@
   border-radius: 5px;
 
   white-space: nowrap;
+
+  width: fit-content;
+  margin: 0 0 18px;
 }

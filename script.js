@@ -464,47 +464,37 @@
       blocos.push(introducao);
     }
 
-    /* =========================================================
-   VERSÕES
-   As versões ficam acima das seções e lado a lado.
-   ========================================================= */
+    /*
+     * Mantém a sequência em que versões e seções foram incluídas
+     * no editor. Antes, todas as versões eram reunidas no topo.
+     */
+    const conteudo =
+      origem.querySelector('#conteudoContainer');
 
-const versoes = [
-  ...origem.querySelectorAll('.versao-editor')
-]
-  .map(versao =>
-    textoSeguro(
-      versao.querySelector('[data-role="versao"]')?.value
-    )
-  )
-  .filter(valor => valor.length > 0);
+    [...(conteudo?.children || [])].forEach(blocoEditor => {
+      if (blocoEditor.classList.contains('versao-editor')) {
+        const versao = textoSeguro(
+          blocoEditor.querySelector('[data-role="versao"]')?.value
+        );
 
-if (versoes.length) {
-  const versoesWrap =
-    document.createElement('div');
+        if (versao) {
+          const versaoElemento = textoElemento(
+            versao,
+            'div',
+            'versao-print'
+          );
 
-  versoesWrap.className =
-    'pdf-versoes-topo';
+          blocos.push(versaoElemento);
+        }
 
-  versoes.forEach(versao => {
-    const versaoElemento =
-      textoElemento(
-        versao,
-        'div',
-        'versao-print'
-      );
+        return;
+      }
 
-    versoesWrap.appendChild(
-      versaoElemento
-    );
-  });
+      if (!blocoEditor.classList.contains('secao-editor')) {
+        return;
+      }
 
-  blocos.push(versoesWrap);
-}
-
-    origem
-      .querySelectorAll('.secao-editor')
-      .forEach(secao => {
+      const secao = blocoEditor;
         const titulo = textoSeguro(
           secao.querySelector(
             '[data-role="titulo"]'
@@ -653,7 +643,7 @@ if (versoes.length) {
 
             blocos.push(card);
           });
-      });
+    });
 
     return blocos;
   }
