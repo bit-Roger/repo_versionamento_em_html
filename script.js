@@ -26,8 +26,8 @@
         'Confira abaixo as melhorias, correções e novas funcionalidades disponibilizadas nesta atualização do sistema PTM.'
     },
 
-    PTM_ADM: {
-      sigla: 'PTM_ADM',
+    PTM_Adm: {
+      sigla: 'PTM_Adm',
       nome: 'Portal da Transparência Municipal Administrativo',
       titulo: 'ATUALIZAÇÃO DO SISTEMA PTM_Adm',
       introducao:
