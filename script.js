@@ -86,10 +86,41 @@
   }
 
   /* =========================================================
+     POSIÇÃO DE INSERÇÃO
+     ========================================================= */
+
+  /*
+   * Sem referência, o novo bloco vai para o fim da lista.
+   * Com referência (a versão ou seção cujo botão foi clicado),
+   * entra logo acima ou logo abaixo dela.
+   */
+  function inserirBloco(container, elemento, posicao, referencia) {
+    if (!referencia) {
+      container.appendChild(elemento);
+    } else if (posicao === 'acima') {
+      referencia.before(elemento);
+    } else {
+      referencia.after(elemento);
+    }
+  }
+
+  /*
+   * Botões que acompanham cada versão e cada seção.
+   */
+  const botoesInserir = `
+    <div class="linha-inserir">
+      <button type="button" class="btn-inserir" data-action="inserir" data-tipo="versao" data-posicao="acima">▲ Versão acima</button>
+      <button type="button" class="btn-inserir" data-action="inserir" data-tipo="secao" data-posicao="acima">▲ Seção acima</button>
+      <button type="button" class="btn-inserir" data-action="inserir" data-tipo="versao" data-posicao="abaixo">▼ Versão abaixo</button>
+      <button type="button" class="btn-inserir" data-action="inserir" data-tipo="secao" data-posicao="abaixo">▼ Seção abaixo</button>
+    </div>
+  `;
+
+  /* =========================================================
      VERSÕES
      ========================================================= */
 
-  function adicionarVersao() {
+  function adicionarVersao(posicao = 'abaixo', referencia = null) {
     contadorVersao++;
 
     const id = contadorVersao;
@@ -118,9 +149,11 @@
         class="versao-input-item"
         placeholder="Ex.: vX.XX.X - dd/mm/aaaa"
         data-role="versao">
+
+      ${botoesInserir}
     `;
 
-    container.appendChild(div);
+    inserirBloco(container, div, posicao, referencia);
   }
 
   function removerVersao(id) {
@@ -135,7 +168,7 @@
      SEÇÕES
      ========================================================= */
 
-  function adicionarSecao() {
+  function adicionarSecao(posicao = 'abaixo', referencia = null) {
     contadorSecao++;
 
     const id = contadorSecao;
@@ -177,9 +210,11 @@
           + Adicionar item
         </button>
       </div>
+
+      ${botoesInserir}
     `;
 
-    container.appendChild(div);
+    inserirBloco(container, div, posicao, referencia);
 
     adicionarItem(id);
   }
@@ -1460,7 +1495,7 @@
       )
       ?.addEventListener(
         'click',
-        adicionarVersao
+        () => adicionarVersao()
       );
 
     document
@@ -1498,6 +1533,27 @@
         removerSecao(
           Number(btn.dataset.id)
         );
+
+        return;
+      }
+
+
+      /* =========================
+         INSERIR VERSÃO / SEÇÃO
+         ACIMA OU ABAIXO DO BLOCO
+         ========================= */
+
+      if (acao === 'inserir') {
+
+        const referencia =
+          btn.closest('.versao-editor, .secao-editor');
+
+        const adicionar =
+          btn.dataset.tipo === 'versao'
+            ? adicionarVersao
+            : adicionarSecao;
+
+        adicionar(btn.dataset.posicao, referencia);
 
         return;
       }
@@ -1542,7 +1598,7 @@
       )
       ?.addEventListener(
         'click',
-        adicionarSecao
+        () => adicionarSecao()
       );
 
     document

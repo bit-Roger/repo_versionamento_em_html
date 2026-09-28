@@ -304,6 +304,11 @@
   .btn-remover-item{background:transparent;color:#a33;font-size:.78rem;padding:4px 8px;}
   .btn-secao{background:var(--vinho);color:#fff;padding:11px 18px;}
   .btn-secao:hover{background:var(--vinho-escuro);}
+
+  /* Inserir versão/seção acima ou abaixo de cada bloco */
+  .linha-inserir{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:8px;border-top:1px dashed var(--linha);}
+  .btn-inserir{background:transparent;color:var(--vinho);border:1px solid #e5d2d5;font-size:.75rem;padding:4px 10px;}
+  .btn-inserir:hover{background:#efe3e5;}
   .btn-gerar{background:#2b2320;color:#fff;padding:11px 18px;}
   .btn-gerar:hover{background:#000;}
   .remover-secao{position:absolute;top:14px;right:14px;}
