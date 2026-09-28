@@ -36,6 +36,8 @@
   };
 
   let modeloSelecionado = null;
+  // id do versionamento salvo que está aberto no editor (null = novo).
+  let versionamentoEditandoId = null;
   let contadorSecao = 0;
   let contadorVersao = 0;
 
@@ -290,6 +292,27 @@
     throw new Error('Informe pelo menos uma versão.');
   }
 
+  /*
+   * Posição de cada bloco no documento, contando versões e seções.
+   * É salva como "ordem" da seção para remontar a sequência ao editar.
+   */
+  const posicoes = new Map();
+  let posicao = 0;
+
+  document
+    .querySelectorAll('#conteudoContainer > .versao-editor, #conteudoContainer > .secao-editor')
+    .forEach(bloco => {
+      if (
+        bloco.classList.contains('versao-editor') &&
+        !textoSeguro(bloco.querySelector('[data-role="versao"]')?.value)
+      ) {
+        return;
+      }
+
+      posicao++;
+      posicoes.set(bloco, posicao);
+    });
+
   const secoes = [
     ...document.querySelectorAll('.secao-editor')
   ].map((secao, index) => {
@@ -347,7 +370,7 @@
 
     return {
       titulo,
-      ordem: index + 1,
+      ordem: posicoes.get(secao) ?? index + 1,
       itens
     };
   });
@@ -1260,6 +1283,8 @@
 
           body: JSON.stringify({
             ...dados,
+            id:
+              versionamentoEditandoId,
             nome_arquivo:
               nomeArquivo,
             pdf_base64:
@@ -1383,8 +1408,18 @@
           )
       );
 
+      const eraEdicao =
+        Boolean(versionamentoEditandoId);
+
+      marcarEdicao(
+        resultado.id,
+        resultado.nome_arquivo
+      );
+
       alert(
-        'Versionamento salvo com sucesso e PDF armazenado.'
+        eraEdicao
+          ? 'Alterações salvas com sucesso e PDF atualizado.'
+          : 'Versionamento salvo com sucesso e PDF armazenado.'
       );
     } catch (erro) {
       console.error(
@@ -1468,6 +1503,7 @@
      ========================================================= */
 
   const URL_LISTAR = '/.netlify/functions/listar-versionamentos';
+  const URL_ABRIR = '/.netlify/functions/abrir-versionamento';
 
   function formatarData(iso) {
     const data = new Date(iso);
@@ -1531,13 +1567,25 @@
 
         info.append(nome, detalhe);
 
+        const acoes = document.createElement('div');
+        acoes.className = 'historico-acoes';
+
+        const editar = document.createElement('button');
+        editar.type = 'button';
+        editar.className = 'btn-item';
+        editar.textContent = 'Editar';
+        editar.dataset.id = registro.id;
+        editar.dataset.acao = 'editar';
+
         const botao = document.createElement('button');
         botao.type = 'button';
         botao.className = 'btn-secao';
         botao.textContent = 'Baixar';
         botao.dataset.id = registro.id;
+        botao.dataset.acao = 'baixar';
 
-        li.append(info, botao);
+        acoes.append(editar, botao);
+        li.append(info, acoes);
         lista.appendChild(li);
       }
     } catch (erro) {
@@ -1566,6 +1614,126 @@
       botao.disabled = false;
       botao.textContent = original;
     }
+  }
+
+  /* =========================================================
+     EDITAR UM VERSIONAMENTO SALVO
+     ========================================================= */
+
+  function marcarEdicao(id, nomeArquivo) {
+    versionamentoEditandoId = id ?? null;
+
+    const aviso = document.getElementById('avisoEdicao');
+    const nome = document.getElementById('avisoEdicaoNome');
+
+    if (nome) nome.textContent = nomeArquivo || '';
+    if (aviso) aviso.hidden = !versionamentoEditandoId;
+  }
+
+  function editorTemConteudo() {
+    return [
+      ...document.querySelectorAll('#conteudoContainer input, #conteudoContainer textarea')
+    ].some(campo => textoSeguro(campo.value));
+  }
+
+  function limparEditor() {
+    const container = document.getElementById('conteudoContainer');
+
+    if (container) container.innerHTML = '';
+  }
+
+  function preencherEditor(blocos) {
+    const container = document.getElementById('conteudoContainer');
+
+    limparEditor();
+
+    for (const bloco of blocos) {
+      if (bloco.tipo === 'versao') {
+        adicionarVersao();
+
+        const campo = container.lastElementChild
+          ?.querySelector('[data-role="versao"]');
+
+        if (campo) campo.value = bloco.texto || '';
+
+        continue;
+      }
+
+      adicionarSecao();
+
+      const secaoId = contadorSecao;
+      const secao = container.lastElementChild;
+      const itens = bloco.itens?.length ? bloco.itens : [{}];
+
+      secao.querySelector('[data-role="titulo"]').value = bloco.titulo || '';
+
+      // adicionarSecao já cria o primeiro item.
+      for (let i = 1; i < itens.length; i++) {
+        adicionarItem(secaoId);
+      }
+
+      secao.querySelectorAll('.item-editor').forEach((item, i) => {
+        item.querySelector('[data-role="h3"]').value = itens[i].caminho_sistema || '';
+        item.querySelector('[data-role="p"]').value = itens[i].descricao || '';
+      });
+    }
+  }
+
+  async function abrirParaEdicao(botao) {
+    if (
+      editorTemConteudo() &&
+      !confirm('O conteúdo atual do editor será substituído. Continuar?')
+    ) {
+      return;
+    }
+
+    const original = botao.textContent;
+
+    botao.disabled = true;
+    botao.textContent = 'Abrindo...';
+
+    try {
+      const registro = await buscarJson(
+        `${URL_ABRIR}?id=${encodeURIComponent(botao.dataset.id)}`
+      );
+
+      selecionarModelo(registro.modelo_sistema);
+      preencherEditor(registro.blocos);
+
+      const nome = botao
+        .closest('.historico-item')
+        ?.querySelector('strong')
+        ?.textContent;
+
+      marcarEdicao(registro.id, nome);
+      fecharHistorico();
+
+      if (registro.versoes_perdidas) {
+        alert(
+          'Este PDF foi salvo antes da correção das versões. ' +
+            'Digite as versões novamente antes de salvar.'
+        );
+      }
+    } catch (erro) {
+      console.error(erro);
+      alert(`Não foi possível abrir o versionamento: ${erro.message}`);
+    } finally {
+      botao.disabled = false;
+      botao.textContent = original;
+    }
+  }
+
+  function novoDocumento() {
+    if (
+      editorTemConteudo() &&
+      !confirm('Começar um documento novo? O que não foi salvo será perdido.')
+    ) {
+      return;
+    }
+
+    marcarEdicao(null);
+    limparEditor();
+    adicionarVersao();
   }
 
   function abrirHistorico() {
@@ -1743,6 +1911,10 @@
       ?.addEventListener('click', abrirHistorico);
 
     document
+      .getElementById('btnNovoDocumento')
+      ?.addEventListener('click', novoDocumento);
+
+    document
       .getElementById('btnFecharHistorico')
       ?.addEventListener('click', fecharHistorico);
 
@@ -1761,7 +1933,11 @@
 
         const botao = e.target.closest('button[data-id]');
 
-        if (botao) {
+        if (!botao) return;
+
+        if (botao.dataset.acao === 'editar') {
+          abrirParaEdicao(botao);
+        } else {
           baixarPdfAnterior(botao);
         }
       });
