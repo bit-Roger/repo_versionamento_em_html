@@ -1464,6 +1464,134 @@
   }
 
   /* =========================================================
+     PDFS ANTERIORES (HISTÓRICO SALVO NO SUPABASE)
+     ========================================================= */
+
+  const URL_LISTAR = '/.netlify/functions/listar-versionamentos';
+
+  function formatarData(iso) {
+    const data = new Date(iso);
+
+    return Number.isNaN(data.getTime())
+      ? ''
+      : data.toLocaleString('pt-BR', {
+          dateStyle: 'short',
+          timeStyle: 'short'
+        });
+  }
+
+  async function buscarJson(url) {
+    const resposta = await fetch(url);
+
+    const resultado = await resposta.json().catch(() => null);
+
+    if (!resposta.ok || !resultado?.ok) {
+      throw new Error(
+        resultado?.error ||
+          `O servidor retornou HTTP ${resposta.status}.`
+      );
+    }
+
+    return resultado;
+  }
+
+  async function carregarHistorico() {
+    const modelo = document.getElementById('historicoModelo')?.value || '';
+    const status = document.getElementById('historicoStatus');
+    const lista = document.getElementById('historicoLista');
+
+    if (!status || !lista) return;
+
+    lista.innerHTML = '';
+    status.textContent = 'Carregando...';
+
+    try {
+      const params = new URLSearchParams();
+
+      if (modelo) params.set('modelo', modelo);
+
+      const { itens } = await buscarJson(`${URL_LISTAR}?${params}`);
+
+      status.textContent = itens.length
+        ? ''
+        : 'Nenhum PDF salvo para este filtro.';
+
+      for (const registro of itens) {
+        const li = document.createElement('li');
+        li.className = 'historico-item';
+
+        const info = document.createElement('div');
+
+        const nome = document.createElement('strong');
+        nome.textContent = registro.nome_arquivo;
+
+        const detalhe = document.createElement('span');
+        detalhe.textContent =
+          `${registro.modelo_sistema} · ${formatarData(registro.criado_em)}`;
+
+        info.append(nome, detalhe);
+
+        const botao = document.createElement('button');
+        botao.type = 'button';
+        botao.className = 'btn-secao';
+        botao.textContent = 'Baixar';
+        botao.dataset.id = registro.id;
+
+        li.append(info, botao);
+        lista.appendChild(li);
+      }
+    } catch (erro) {
+      console.error(erro);
+      status.textContent = `Não foi possível carregar: ${erro.message}`;
+    }
+  }
+
+  async function baixarPdfAnterior(botao) {
+    const original = botao.textContent;
+
+    botao.disabled = true;
+    botao.textContent = 'Baixando...';
+
+    try {
+      const { url } = await buscarJson(
+        `${URL_LISTAR}?id=${encodeURIComponent(botao.dataset.id)}`
+      );
+
+      // O link já vem assinado para download com o nome original.
+      window.location.href = url;
+    } catch (erro) {
+      console.error(erro);
+      alert(`Não foi possível baixar o PDF: ${erro.message}`);
+    } finally {
+      botao.disabled = false;
+      botao.textContent = original;
+    }
+  }
+
+  function abrirHistorico() {
+    const overlay = document.getElementById('historicoOverlay');
+    const filtro = document.getElementById('historicoModelo');
+
+    if (!overlay) return;
+
+    if (filtro && modeloSelecionado) {
+      filtro.value = modeloSelecionado.sigla;
+    }
+
+    overlay.classList.remove('fechado');
+    overlay.setAttribute('aria-hidden', 'false');
+
+    carregarHistorico();
+  }
+
+  function fecharHistorico() {
+    const overlay = document.getElementById('historicoOverlay');
+
+    overlay?.classList.add('fechado');
+    overlay?.setAttribute('aria-hidden', 'true');
+  }
+
+  /* =========================================================
      EVENTOS
      ========================================================= */
 
@@ -1609,6 +1737,34 @@
         'click',
         imprimirPDF
       );
+
+    document
+      .getElementById('btnPdfsAnteriores')
+      ?.addEventListener('click', abrirHistorico);
+
+    document
+      .getElementById('btnFecharHistorico')
+      ?.addEventListener('click', fecharHistorico);
+
+    document
+      .getElementById('historicoModelo')
+      ?.addEventListener('change', carregarHistorico);
+
+    document
+      .getElementById('historicoOverlay')
+      ?.addEventListener('click', e => {
+        // Clique fora da caixa fecha o histórico.
+        if (e.target === e.currentTarget) {
+          fecharHistorico();
+          return;
+        }
+
+        const botao = e.target.closest('button[data-id]');
+
+        if (botao) {
+          baixarPdfAnterior(botao);
+        }
+      });
 
  
 

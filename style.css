@@ -853,3 +853,22 @@
   width: fit-content;
   margin: 0 0 18px;
 }
+
+/* =========================================================
+   PDFs ANTERIORES
+   ========================================================= */
+.historico-box { width: min(720px, 100%); text-align: left; }
+.historico-filtro { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.historico-filtro label { font-weight: 600; }
+.historico-filtro select { padding: 6px 10px; border: 1px solid var(--linha); border-radius: 6px; font-family: inherit; }
+.historico-status { color: var(--texto-suave); margin: 0 0 8px; }
+.historico-lista { list-style: none; margin: 0; padding: 0; max-height: 60vh; overflow-y: auto; }
+.historico-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+.historico-item strong { display: block; overflow-wrap: anywhere; }
+.historico-item span { display: block; font-size: .8rem; color: var(--texto-suave); }
+.historico-item button { flex-shrink: 0; }
+.historico-rodape { justify-content: flex-end; }
+.historico-acoes { display: flex; gap: 6px; flex-shrink: 0; }
+.aviso-edicao { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; padding: 10px 14px; background: var(--rosa-claro); border-left: 4px solid var(--vinho); border-radius: 6px; font-size: .9rem; }
+.aviso-edicao[hidden] { display: none; }
+.aviso-edicao strong { overflow-wrap: anywhere; }

@@ -36,6 +36,11 @@
     <div class="wrap">
       <p class="sub" id="textoIntroducao"></p>
 
+<div id="avisoEdicao" class="aviso-edicao" hidden>
+  <span>Editando o PDF salvo <strong id="avisoEdicaoNome"></strong>. Ao salvar, ele será atualizado.</span>
+  <button type="button" id="btnNovoDocumento" class="btn-item">Novo documento</button>
+</div>
+
 <div class="painel">
 
   <div id="conteudoContainer"></div>
@@ -68,8 +73,35 @@
     Gerar / Salvar PDF
   </button>
 
+  <button
+    type="button"
+    id="btnPdfsAnteriores"
+    class="btn-item">
+    PDFs anteriores
+  </button>
+
 </div>
     <div id="printContainer" aria-hidden="true"></div>
+    <div id="historicoOverlay" class="modelo-overlay fechado" aria-hidden="true" aria-label="PDFs anteriores">
+      <div class="modelo-box historico-box">
+        <h2>PDFs anteriores</h2>
+        <div class="historico-filtro">
+          <label for="historicoModelo">Sistema</label>
+          <select id="historicoModelo">
+            <option value="">Todos</option>
+            <option value="PCA">PCA</option>
+            <option value="CIA">CIA</option>
+            <option value="PTM">PTM</option>
+            <option value="PTM_Adm">PTM_Adm</option>
+          </select>
+        </div>
+        <p id="historicoStatus" class="historico-status"></p>
+        <ul id="historicoLista" class="historico-lista"></ul>
+        <div class="linha-botoes historico-rodape">
+          <button type="button" id="btnFecharHistorico" class="btn-item">Fechar</button>
+        </div>
+      </div>
+    </div>
   </main>
   <footer class="bottom"><div><div class="company">EL PRODUÇÕES DE SOFTWARE</div><div class="tagline">Soluções tecnológicas para uma gestão pública mais eficiente.</div></div></footer>
 </div>
