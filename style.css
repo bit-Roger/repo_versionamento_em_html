@@ -872,3 +872,29 @@
 .aviso-edicao { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 16px; padding: 10px 14px; background: var(--rosa-claro); border-left: 4px solid var(--vinho); border-radius: 6px; font-size: .9rem; }
 .aviso-edicao[hidden] { display: none; }
 .aviso-edicao strong { overflow-wrap: anywhere; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+/* =========================================================
+   LOGIN
+   ========================================================= */
+.login-overlay { z-index: 100000; background: var(--bg); }
+#novoUsuarioOverlay { z-index: 100001; }
+.login-box { width: min(400px, 100%); text-align: left; display: flex; flex-direction: column; gap: 6px; }
+.login-box h2 { text-align: center; margin-bottom: 8px; }
+.login-logo { display: block; max-width: 160px; margin: 0 auto 8px; }
+.login-box label { font-weight: 600; font-size: .9rem; margin-top: 6px; }
+.login-box input { padding: 10px 12px; border: 1px solid var(--linha); border-radius: 6px; font-family: inherit; font-size: 1rem; }
+.login-box input:focus { outline: 2px solid var(--vinho); outline-offset: 0; border-color: var(--vinho); }
+.login-box button[type="submit"] { margin-top: 8px; }
+.login-box .linha-botoes { align-items: center; }
+.login-box .linha-botoes button { margin-top: 0; }
+.form-erro { min-height: 1.2em; color: #a33; font-size: .85rem; margin: 4px 0 0; }
+.form-erro.sucesso { color: #1d7a3a; }
+.regras-senha { list-style: none; margin: 4px 0 0; padding: 0; font-size: .82rem; color: var(--texto-suave); }
+.regras-senha li::before { content: "○ "; }
+.regras-senha li.ok { color: #1d7a3a; }
+.regras-senha li.ok::before { content: "✓ "; }
+.barra-usuario { width: 210mm; max-width: 100%; margin: 0 auto 12px; display: flex; justify-content: flex-end; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .9rem; }
+.barra-usuario[hidden] { display: none; }
+.barra-usuario span { margin-right: auto; }
+@media print { .login-overlay, #novoUsuarioOverlay, .barra-usuario { display: none !important; } }
